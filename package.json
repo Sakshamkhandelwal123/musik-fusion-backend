@@ -8,9 +8,22 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "npm run init:db && nest start",
-    "start:dev": "set NODE_ENV=development&&nest start --watch",
+    "start:development": "set NODE_ENV=development&&nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@nestjs/cli": "^10.1.18",
+    "@nestjs/common": "^10.2.7",
+    "@nestjs/core": "^10.2.7",
+    "@nestjs/platform-express": "^10.2.7",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/morgan": "^1.9.7"
   },
   "engines": {
     "node": "18.16.1"
