@@ -53,7 +53,7 @@ Here's a brief description of each environment variable:
 APP_ENV= # The environment in which the application is running (e.g. development, main)   
 ```
 
-# Database
+### Database
 ```
 DB_DIALECT= # The dialect of the database server   
 DB_HOST= # The hostname of the database server   
