@@ -1,6 +1,6 @@
 # MusikFusion
 
-Made by combining music and fusion, Musicfusion is a webapp that gives you an extraordinary experience while listening to a music.
+Made by combining music and fusion, Musikfusion is a web application that gives you an extraordinary experience while listening a music.
 
 ## Features(in development)
 
@@ -12,7 +12,7 @@ Made by combining music and fusion, Musicfusion is a webapp that gives you an ex
 6. Search --> Search any Song   
 7. Notifications   
 8. Friends   
-9. Trending   
+9. Trending Songs   
 10. Chat System --> Chat with Friends while listening to music   
 
 ## Technology Used
