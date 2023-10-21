@@ -1,7 +1,9 @@
 # MusikFusion
+
 Made by combining music and fusion, Musicfusion is a webapp that gives you an extraordinary experience while listening to a music.
 
 ## Features(in development)
+
 1. Login   
 2. Signup   
 3. Dashboard   
@@ -14,8 +16,51 @@ Made by combining music and fusion, Musicfusion is a webapp that gives you an ex
 10. Chat System --> Chat with Friends while listening to music   
 
 ## Technology Used
+
 1. NodeJS   
 2. TypeScript   
 3. NestJS   
 4. GraphQL   
 5. PostgreSQL   
+
+## Installation
+
+```bash
+$ npm install
+```
+
+## Running the application
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+```
+
+## Environment Variables
+
+This application uses environment variables to configure various settings. These variables are stored in an `.env` file located in the root of the project.
+
+Here's a brief description of each environment variable:
+
+### Environment
+```
+APP_ENV= # The environment in which the application is running (e.g. development, main)   
+```
+
+# Database
+```
+DB_DIALECT= # The dialect of the database server   
+DB_HOST= # The hostname of the database server   
+DB_PORT= # The port number on which the database server is listening   
+DB_USERNAME= # The username of the database user   
+DB_PASSWORD= # The password of the database user   
+DB_NAME= # The name of the database   
+```
+
+Make sure to replace the placeholder values with your own values before starting the application.
