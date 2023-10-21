@@ -25,11 +25,15 @@ Made by combining music and fusion, Musicfusion is a webapp that gives you an ex
 
 ## Installation
 
+To install the dependencies for this project, run the following command:
+
 ```bash
 $ npm install
 ```
 
 ## Running the application
+
+To start the application run the following command:
 
 ```bash
 # development
