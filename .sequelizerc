@@ -1,0 +1,10 @@
+const path = require('path');
+
+// For more sequelize commands see https://github.com/sequelize/cli#usage
+// & https://sequelize.org/v5/manual/migrations.html
+
+module.exports = {
+  'seeders-path': path.resolve('database', 'seeders'),
+  'migrations-path': path.resolve('database', 'migrations'),
+  config: path.resolve('database', 'config.js'),
+};
