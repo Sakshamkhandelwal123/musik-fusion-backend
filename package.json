@@ -7,31 +7,45 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\"",
     "start": "npm run init:db && nest start",
-    "start:development": "set NODE_ENV=development&&nest start --watch",
+    "start:dev": "npm run init:db && nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:production": "npm run init:db && node dist/src/main",
+    "start:prod": "npm run init:db && node dist/src/main",
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
-    "format": "prettier --write \"src/**/*.ts\""
+    "init:db": "npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"
   },
   "dependencies": {
-    "@nestjs/cli": "^10.1.18",
     "@nestjs/common": "^10.2.7",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.2.7",
     "@nestjs/platform-express": "^10.2.7",
+    "@nestjs/sequelize": "^10.0.0",
     "@nestjs/swagger": "^7.1.13",
-    "@typescript-eslint/eslint-plugin": "^6.8.0",
-    "@typescript-eslint/parser": "^6.8.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "dotenv": "^16.3.1",
+    "helmet": "^7.0.0",
+    "joi": "^17.11.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1",
+    "sequelize": "^6.33.0",
+    "sequelize-cli": "^6.6.1",
+    "sequelize-typescript": "^2.1.5"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.1.18",
+    "@types/morgan": "^1.9.7",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
-    "helmet": "^7.0.0",
-    "morgan": "^1.10.0"
-  },
-  "devDependencies": {
-    "@types/morgan": "^1.9.7"
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
   },
   "engines": {
     "node": "18.16.1"
