@@ -1,11 +1,16 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { Dialect } from 'sequelize';
-import { applicationConfig } from 'config';
-import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { join } from 'path';
+import { Dialect } from 'sequelize';
+import { Module } from '@nestjs/common';
+import { ApolloDriver } from '@nestjs/apollo';
+import { ConfigModule } from '@nestjs/config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { SequelizeModule } from '@nestjs/sequelize';
+
+import { applicationConfig } from 'config';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -34,6 +39,18 @@ import * as Joi from 'joi';
       autoLoadModels: true,
       synchronize: false,
     }),
+    GraphQLModule.forRoot({
+      driver: ApolloDriver,
+      debug: false,
+      playground: !applicationConfig.app.isProduction,
+      typePaths: ['./**/*.graphql'],
+      definitions: {
+        path: join(process.cwd(), 'src/graphql.ts'),
+      },
+      synchronize: true,
+      fieldResolverEnhancers: ['guards'],
+    }),
+    UsersModule,
   ],
   providers: [AppService],
   controllers: [AppController],

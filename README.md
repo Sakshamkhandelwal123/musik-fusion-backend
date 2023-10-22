@@ -19,9 +19,11 @@ Made by combining music and fusion, Musikfusion is a web application that gives 
 
 1. NodeJS   
 2. TypeScript   
-3. NestJS   
-4. GraphQL   
-5. PostgreSQL   
+3. Express   
+4. NestJS   
+5. GraphQL   
+6. PostgreSQL   
+7. Sequelize   
 
 ## Installation
 
