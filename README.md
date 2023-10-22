@@ -69,4 +69,10 @@ DB_PASSWORD= # The password of the database user
 DB_NAME= # The name of the database   
 ```
 
+### Spotify
+```
+SPOTIFY_CLIENT_ID= # Spotify development client id
+SPOTIFY_CLIENT_SECRET= # Spotify development client secret
+```
+
 Make sure to replace the placeholder values with your own values before starting the application.

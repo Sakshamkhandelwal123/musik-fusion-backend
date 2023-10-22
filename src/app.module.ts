@@ -11,6 +11,7 @@ import { applicationConfig } from 'config';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { UsersModule } from './users/users.module';
       fieldResolverEnhancers: ['guards'],
     }),
     UsersModule,
+    CommonModule,
   ],
   providers: [AppService],
   controllers: [AppController],

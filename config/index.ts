@@ -18,4 +18,9 @@ export const applicationConfig = {
     password: process.env.DB_PASSWORD,
     name: process.env.DB_NAME,
   },
+
+  spotify: {
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+  },
 };
