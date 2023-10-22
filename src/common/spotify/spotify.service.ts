@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
 import axios, { Axios } from 'axios';
 import { applicationConfig } from 'config';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SpotifyService {
@@ -29,5 +29,15 @@ export class SpotifyService {
     });
 
     return token.data.access_token;
+  }
+
+  async axiosRequest(method: string, url: string, options?: object) {
+    const response = await this.axiosApiClient.request({
+      method,
+      url,
+      ...options,
+    });
+
+    return response.data;
   }
 }
