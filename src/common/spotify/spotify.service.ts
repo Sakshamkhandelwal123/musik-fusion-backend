@@ -1,6 +1,7 @@
 import axios, { Axios } from 'axios';
-import { applicationConfig } from 'config';
 import { Injectable } from '@nestjs/common';
+
+import { applicationConfig } from 'config';
 
 @Injectable()
 export class SpotifyService {

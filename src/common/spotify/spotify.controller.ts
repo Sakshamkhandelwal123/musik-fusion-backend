@@ -1,5 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
+
 import { SpotifyService } from './spotify.service';
+import { getErrorCodeAndMessage } from 'src/utils/helpers';
 
 @Controller('spotify')
 export class SpotifyController {
@@ -12,7 +14,10 @@ export class SpotifyController {
 
       return token;
     } catch (error) {
-      throw error;
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }
