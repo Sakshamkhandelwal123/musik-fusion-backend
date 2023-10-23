@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { applicationConfig } from 'config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,17 +34,19 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
+  const swaggerConfig = new DocumentBuilder()
     .setTitle('Musik Fusion Apis')
     .setDescription('These are musik fusion apis')
     .setVersion('1.0')
     .addTag('MusicFusionApis')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
 
-  const res = await app.listen(4000, '0.0.0.0');
-  const serverAddress = res.address();
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+
+  SwaggerModule.setup('api-docs', app, swaggerDocument);
+
+  const response = await app.listen(applicationConfig.app.port, '0.0.0.0');
+  const serverAddress = response.address();
 
   console.log(
     `⚡ Server is listening at http://${serverAddress.address}:${serverAddress.port}`,
