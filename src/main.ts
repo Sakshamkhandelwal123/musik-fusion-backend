@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { applicationConfig } from 'config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,7 +45,7 @@ async function bootstrap() {
 
   SwaggerModule.setup('api-docs', app, swaggerDocument);
 
-  const response = await app.listen(4000, '0.0.0.0');
+  const response = await app.listen(applicationConfig.app.port, '0.0.0.0');
   const serverAddress = response.address();
 
   console.log(
