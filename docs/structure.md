@@ -8,7 +8,7 @@
 2. Dashboard   
     --Profile   
     --Playlists   
-    --Favorites
+    --Favorites   
     --Search   
     --Notifications   
     --Settings   
@@ -18,7 +18,7 @@
 3. Profile   
     --Profile Image   
     --User Details   
-    --Playlists
+    --Playlists   
     --Followers   
     --Following   
     --Favorites   
