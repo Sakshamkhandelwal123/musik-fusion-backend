@@ -24,7 +24,10 @@
     --Favorites   
 
 4. Playlist   
+    --Details   
     --Songs   
+    --Followers   
+    --Tags   
 
 5. Search   
     --User/Artist   
@@ -38,12 +41,24 @@
     --Change Password   
     --Delete Account   
 
-7. Friends   
+7. Friend   
     --Activity   
     --Chat   
 
 8. Song   
+    --Details   
     --Likes   
     --Queue   
     --Favorite   
     --Start/Stop   
+    --Forward/Backward   
+
+9. Community   
+    --Details   
+    --Posts   
+    --Followers   
+    --Tags   
+
+10. Post   
+    --Likes   
+    --Comments   
