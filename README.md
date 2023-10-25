@@ -14,6 +14,7 @@ Made by combining music and fusion, Musikfusion is a web application that gives 
 8. Friends   
 9. Trending Songs   
 10. Chat System --> Chat with Friends while listening to music   
+11. Community   
 
 ## Technology Used
 
