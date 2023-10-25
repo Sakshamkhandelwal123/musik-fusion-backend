@@ -25,3 +25,16 @@
     --Add Songs   
     --Delete Songs   
     --Delete Playlist   
+
+5. Search   
+    --User/Artist   
+    --Song   
+    --Playlist   
+    --Albums   
+
+6. Settings   
+    --Private/Public Profile     
+
+7. Friends
+    --Activity   
+    --Chat   
