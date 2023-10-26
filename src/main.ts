@@ -38,7 +38,7 @@ async function bootstrap() {
     .setTitle('Musik Fusion Apis')
     .setDescription('These are musik fusion apis')
     .setVersion('1.0')
-    .addTag('MusicFusionApis')
+    .addTag('MusikFusionApis')
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
