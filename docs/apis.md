@@ -11,18 +11,23 @@
 
 ### Mutation
 
-| Name                    | Auth | Body / GraphQL Input |
-| :---------------------- | :--: | :------------------- |
-| signin                  | :x:  |                      |
-| signup                  | :x:  |                      |
-| resetPassword           | :x:  |                      |
-| verifyPhoneNumber       | :x:  |                      |
-| verifyEmail             | :x:  |                      |
-| resendOtp               | :x:  |                      |
-| resendVerificationEmail | :x:  |                      |
+| Name                    |        Auth        | Body / GraphQL Input |
+| :---------------------- | :----------------: | :------------------- |
+| signin                  |        :x:         |                      |
+| signup                  |        :x:         |                      |
+| resetPassword           |        :x:         |                      |
+| verifyPhoneNumber       |        :x:         |                      |
+| verifyEmail             |        :x:         |                      |
+| resendOtp               |        :x:         |                      |
+| resendVerificationEmail |        :x:         |                      |
+| updateProfile           | :white_check_mark: |                      |
+| deleteAccount           | :white_check_mark: |                      |
+| getUserFollowers        |        :x:         |                      |
+| getUserFollowing        |        :x:         |                      |
 
 ## Rest Apis
 
-| Name                                      | Type | Auth | Body Input | Query Params |
-| :---------------------------------------- | :--: | :--: | :--------- | :----------- |
-| /spotify/get-spotify-authentication-token | GET  | :x:  |            |              |
+| Name                                      | Type |        Auth        | Body Input | Query Params |
+| :---------------------------------------- | :--: | :----------------: | :--------- | :----------- |
+| /spotify/get-spotify-authentication-token | GET  |        :x:         |            |              |
+| /image/upload                             | POST | :white_check_mark: |            |              |
