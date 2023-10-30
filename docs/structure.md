@@ -1,8 +1,8 @@
 # Musik Fusion Structure
 
 1. User   
-    - Login   
-    - Signup   
+    - SignIn   
+    - SignUp   
     - Forgot Password    
 
 2. Dashboard   

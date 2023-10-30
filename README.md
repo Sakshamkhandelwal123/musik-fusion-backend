@@ -4,8 +4,8 @@ Made by combining music and fusion, Musikfusion is a web application that gives 
 
 ## Features(in development)
 
-1. Login   
-2. Signup   
+1. SignIn   
+2. SignUp   
 3. Dashboard   
 4. Songs --> Play, Pause, Add to Queue, Forward, Backward, Add to Favorite   
 5. Playlist   

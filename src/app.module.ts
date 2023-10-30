@@ -58,3 +58,16 @@ import { CommonModule } from './common/common.module';
   controllers: [AppController],
 })
 export class AppModule {}
+
+export const vari = ConfigModule.forRoot({
+  isGlobal: true,
+  validationSchema: Joi.object({
+    DB_DIALECT: Joi.string(),
+    DB_HOST: Joi.string(),
+    DB_PORT: Joi.number().default(5432),
+    DB_USERNAME: Joi.string(),
+    DB_PASSWORD: Joi.string().allow(''),
+    DB_NAME: Joi.string(),
+    APP_ENV: Joi.string().valid('development', 'main').default('development'),
+  }),
+});

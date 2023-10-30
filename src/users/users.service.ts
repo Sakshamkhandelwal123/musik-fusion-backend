@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateUserInput } from './dto/create-user.input';
+import { User } from './entities/user.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { SignInInput } from './dto/signin.input';
 import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
-  create(createUserInput: CreateUserInput) {
+  constructor(
+    @InjectModel(User)
+    private readonly userModel: typeof User,
+  ) {}
+
+  create(signInInput: SignInInput) {
     return 'This action adds a new user';
   }
 
@@ -13,8 +20,11 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(condition = {}, options = {}) {
+    return this.userModel.findOne({
+      where: condition,
+      ...options,
+    });
   }
 
   update(id: number, updateUserInput: UpdateUserInput) {

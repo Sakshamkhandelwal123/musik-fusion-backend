@@ -8,8 +8,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export interface CreateUserInput {
-    exampleField?: Nullable<number>;
+export interface SignInInput {
+    email: string;
+    password: string;
 }
 
 export interface UpdateUserInput {
@@ -26,7 +27,7 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    createUser(createUserInput: CreateUserInput): User | Promise<User>;
+    signIn(signInInput: SignInInput): User | Promise<User>;
     updateUser(updateUserInput: UpdateUserInput): User | Promise<User>;
     removeUser(id: number): Nullable<User> | Promise<Nullable<User>>;
 }
