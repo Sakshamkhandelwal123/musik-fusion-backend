@@ -7,30 +7,30 @@
 | Name              |        Auth        | GraphQL Input |
 | :---------------- | :----------------: | :------------ |
 | me                | :white_check_mark: |               |
-| getUserByUsername |        :x:         |               |
-| getUserFollowers  |        :x:         |               |
-| getUserFollowing  |        :x:         |               |
+| getUserByUsername |        :x:         | username      |
+| getUserFollowers  |        :x:         | username      |
+| getUserFollowing  |        :x:         | username      |
 
 ### Mutation
 
-| Name                    |        Auth        | GraphQL Input |
-| :---------------------- | :----------------: | :------------ |
-| signin                  |        :x:         |               |
-| signup                  |        :x:         |               |
-| resetPassword           |        :x:         |               |
-| changePassword          | :white_check_mark: |               |
-| verifyPhoneNumber       |        :x:         |               |
-| verifyEmail             |        :x:         |               |
-| resendOtp               |        :x:         |               |
-| resendVerificationEmail |        :x:         |               |
-| updateUserProfile       | :white_check_mark: |               |
-| deleteUserAccount       | :white_check_mark: |               |
-| followUser              | :white_check_mark: |               |
-| unfollowUser            | :white_check_mark: |               |
+| Name                    |        Auth        | GraphQL Input                              |
+| :---------------------- | :----------------: | :----------------------------------------- |
+| signin                  |        :x:         | email, password                            |
+| signup                  |        :x:         | firstname, lastname, email, password       |
+| resetPassword           |        :x:         | newPassword                                |
+| changePassword          | :white_check_mark: | newPassword                                |
+| verifyPhoneNumber       |        :x:         | phoneNumber, otp                           |
+| verifyEmail             |        :x:         | email, otp                                 |
+| resendOtp               |        :x:         | phoneNumber                                |
+| resendVerificationEmail |        :x:         | email                                      |
+| updateUserProfile       | :white_check_mark: | username, firstname, lastname, phoneNumber |
+| deleteUserAccount       | :white_check_mark: | username                                   |
+| followUser              | :white_check_mark: | username                                   |
+| unfollowUser            | :white_check_mark: | username                                   |
 
 ## Rest Apis
 
-| Name                                      | Type |        Auth        | Body Input | Query Params |
-| :---------------------------------------- | :--: | :----------------: | :--------- | :----------- |
-| /spotify/get-spotify-authentication-token | GET  |        :x:         |            |              |
-| /image/upload                             | POST | :white_check_mark: |            |              |
+| Name                                      | Type |        Auth        | Body Input     | Query Params |
+| :---------------------------------------- | :--: | :----------------: | :------------- | :----------- |
+| /spotify/get-spotify-authentication-token | GET  |        :x:         |                |              |
+| /image/upload                             | POST | :white_check_mark: | username, type | image        |
