@@ -1,3 +1,4 @@
+import { genSalt, hash } from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
 import { JwtPayload, decode, sign } from 'jsonwebtoken';
 
@@ -6,6 +7,7 @@ import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { SignUpInput } from './dto/signup.input';
 import { generateUsername } from 'src/utils/username-generator';
+import { validatePasswordStrength } from 'src/utils/validation-checks';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +17,12 @@ export class UsersService {
   ) {}
 
   async createUser(signUpInput: SignUpInput, options = {}) {
+    const { password } = signUpInput;
+
+    validatePasswordStrength(password);
+
+    const hashPassword = await hash(signUpInput.password, await genSalt());
+
     let username = `mf-${signUpInput.email}`;
 
     let i = 1;
@@ -34,6 +42,7 @@ export class UsersService {
     const payload = {
       ...signUpInput,
       username,
+      password: hashPassword,
     };
 
     return this.userModel.create(payload, options);

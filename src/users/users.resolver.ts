@@ -2,6 +2,7 @@ import { compare } from 'bcryptjs';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
@@ -12,14 +13,13 @@ import {
   UserAlreadyExistError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
-import { User } from './entities/user.entity';
 
 @Resolver('User')
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation('signUp')
-  async signUp(@Args('signUpInput') signUpInput: SignUpInput): Promise<User> {
+  async signUp(@Args('signUpInput') signUpInput: SignUpInput): Promise<string> {
     try {
       const { email } = signUpInput;
 
@@ -31,7 +31,7 @@ export class UsersResolver {
 
       await this.usersService.createUser(signUpInput);
 
-      return user;
+      return 'We have send a verification email. Please verify you email to continue.';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

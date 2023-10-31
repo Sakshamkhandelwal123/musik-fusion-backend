@@ -37,5 +37,5 @@ type Query {
 
 type Mutation {
   signIn(signInInput: SignInInput!): SignInResponse!
-  signUp(signUpInput: SignUpInput!): User!
+  signUp(signUpInput: SignUpInput!): String!
 }

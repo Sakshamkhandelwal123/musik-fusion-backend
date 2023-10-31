@@ -47,3 +47,39 @@ export class UserAlreadyExistError extends HttpException {
     );
   }
 }
+
+export class PhoneNumberInvalidError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Invalid phone number',
+        code: 'PHONE_NUMBER_INVALID',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class WeakPasswordError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Password is weak',
+        code: 'WEAK_PASSWORD',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class BreachOfPasswordPolicyError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Password policy not met',
+        code: 'BREACH_OF_PASSWORD_POLICY',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
