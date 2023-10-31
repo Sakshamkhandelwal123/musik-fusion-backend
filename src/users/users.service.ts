@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { JwtPayload, decode, sign } from 'jsonwebtoken';
 
+import { applicationConfig } from 'config';
 import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
-import { SignInInput } from './dto/signin.input';
-import { UpdateUserInput } from './dto/update-user.input';
+import { SignUpInput } from './dto/signup.input';
+import { generateUsername } from 'src/utils/username-generator';
 
 @Injectable()
 export class UsersService {
@@ -12,12 +14,29 @@ export class UsersService {
     private readonly userModel: typeof User,
   ) {}
 
-  create(signInInput: SignInInput) {
-    return 'This action adds a new user';
-  }
+  async createUser(signUpInput: SignUpInput, options = {}) {
+    let username = `mf-${signUpInput.email}`;
 
-  findAll() {
-    return `This action returns all users`;
+    let i = 1;
+    while (i <= 5) {
+      const uniqueUsername = generateUsername();
+
+      const user = await this.findOne({ username: uniqueUsername });
+
+      if (!user) {
+        username = uniqueUsername;
+        break;
+      }
+
+      i++;
+    }
+
+    const payload = {
+      ...signUpInput,
+      username,
+    };
+
+    return this.userModel.create(payload, options);
   }
 
   findOne(condition = {}, options = {}) {
@@ -27,11 +46,25 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
-  }
+  generateToken({ id, email }: { id: string; email: string }) {
+    const token = sign(
+      {
+        id,
+        email,
+      },
+      applicationConfig.jwt.secret,
+      {
+        expiresIn: applicationConfig.jwt.expiresIn,
+        algorithm: 'HS256',
+        issuer: applicationConfig.jwt.issuer,
+      },
+    );
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    const decodedToken = decode(token) as JwtPayload;
+
+    return {
+      token,
+      expiresIn: decodedToken.exp - decodedToken.iat,
+    };
   }
 }

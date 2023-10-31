@@ -23,3 +23,27 @@ export class EmailNotVerifiedError extends HttpException {
     );
   }
 }
+
+export class WrongPasswordError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Password is incorrect',
+        code: 'WRONG_PASSWORD',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class UserAlreadyExistError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'User already exist',
+        code: 'USER_ALREADY_EXIST',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}

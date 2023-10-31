@@ -1,6 +1,22 @@
+scalar Date
+
 type User {
-  # Example field (placeholder)
-  exampleField: Int
+  id: String!
+  firstname: String!
+  lastname: String!
+  username: String
+  email: String!
+  isEmailVerified: Boolean!
+  phoneNumber: String
+  isPhoneNumberVerified: Boolean
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type SignInResponse {
+  user: User!
+  accessToken: String!
+  expiresIn: Int!
 }
 
 input SignInInput {
@@ -8,17 +24,18 @@ input SignInInput {
   password: String!
 }
 
-input UpdateUserInput {
-  id: Int!
+input SignUpInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
 }
 
 type Query {
-  users: [User]!
-  user(id: Int!): User
+  me: User!
 }
 
 type Mutation {
-  signIn(signInInput: SignInInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
-  removeUser(id: Int!): User
+  signIn(signInInput: SignInInput!): SignInResponse!
+  signUp(signUpInput: SignUpInput!): User!
 }
