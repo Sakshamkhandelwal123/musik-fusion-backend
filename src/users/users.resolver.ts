@@ -31,7 +31,7 @@ export class UsersResolver {
 
       await this.usersService.createUser(signUpInput);
 
-      return 'We have send a verification email. Please verify you email to continue.';
+      return 'We have send a verification email. Please verify you email to continue!!!';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
