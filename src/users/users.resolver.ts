@@ -108,4 +108,23 @@ export class UsersResolver {
       );
     }
   }
+
+  @Public()
+  @Query('getUserByUsername')
+  async getUserByUsername(@Args('username') username: string) {
+    try {
+      const user = await this.usersService.findOne({ username });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
+
+      return user;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }

@@ -41,6 +41,7 @@ export interface SignInResponse {
 
 export interface IQuery {
     me(): User | Promise<User>;
+    getUserByUsername(username: string): User | Promise<User>;
 }
 
 export interface IMutation {

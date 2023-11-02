@@ -33,6 +33,7 @@ input SignUpInput {
 
 type Query {
   me: User!
+  getUserByUsername(username: String!): User!
 }
 
 type Mutation {
