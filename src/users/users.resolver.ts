@@ -6,15 +6,15 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
+import { Public } from 'src/auth/decorators/public';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
+import { CurrentUser } from 'src/auth/decorators/currentUser';
 import {
   EmailNotVerifiedError,
   InvalidUserError,
   UserAlreadyExistError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
-import { Public } from 'src/auth/decorators/public';
-import { CurrentUser } from 'src/auth/decorators/currentUser';
 
 @Resolver('User')
 export class UsersResolver {
