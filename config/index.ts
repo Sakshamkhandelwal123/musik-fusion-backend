@@ -23,4 +23,10 @@ export const applicationConfig = {
     clientId: process.env.SPOTIFY_CLIENT_ID,
     clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
   },
+
+  jwt: {
+    secret: process.env.JWT_SECRET || 'musik-fusion-secret',
+    expiresIn: '24h',
+    issuer: 'musik-fusion',
+  },
 };

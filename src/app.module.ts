@@ -2,6 +2,8 @@ import * as Joi from 'joi';
 import { join } from 'path';
 import { Dialect } from 'sequelize';
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { APP_GUARD } from '@nestjs/core';
 import { ApolloDriver } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -9,8 +11,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { applicationConfig } from 'config';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
+import { AuthGuard } from './auth/guards/auth.guard';
 import { CommonModule } from './common/common.module';
 
 @Module({
@@ -51,10 +55,18 @@ import { CommonModule } from './common/common.module';
       synchronize: true,
       fieldResolverEnhancers: ['guards'],
     }),
+    AuthModule,
     UsersModule,
     CommonModule,
   ],
-  providers: [AppService],
+  providers: [
+    AppService,
+    JwtService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
   controllers: [AppController],
 })
 export class AppModule {}

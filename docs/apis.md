@@ -15,8 +15,8 @@
 
 | Name                    |        Auth        | GraphQL Input                              |
 | :---------------------- | :----------------: | :----------------------------------------- |
-| signin                  |        :x:         | email, password                            |
-| signup                  |        :x:         | firstname, lastname, email, password       |
+| signIn                  |        :x:         | email, password                            |
+| signUp                  |        :x:         | firstname, lastname, email, password       |
 | resetPassword           |        :x:         | newPassword                                |
 | changePassword          | :white_check_mark: | newPassword                                |
 | verifyPhoneNumber       |        :x:         | phoneNumber, otp                           |

@@ -1,27 +1,79 @@
+import { genSalt, hash } from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
+import { JwtPayload, decode, sign } from 'jsonwebtoken';
 
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
+import { applicationConfig } from 'config';
+import { User } from './entities/user.entity';
+import { InjectModel } from '@nestjs/sequelize';
+import { SignUpInput } from './dto/signup.input';
+import { generateUsername } from 'src/utils/username-generator';
+import { validatePasswordStrength } from 'src/utils/validation-checks';
 
 @Injectable()
 export class UsersService {
-  create(createUserInput: CreateUserInput) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectModel(User)
+    private readonly userModel: typeof User,
+  ) {}
+
+  async createUser(signUpInput: SignUpInput, options = {}) {
+    const { password } = signUpInput;
+
+    validatePasswordStrength(password);
+
+    const hashPassword = await hash(signUpInput.password, await genSalt());
+
+    let username = `mf-${signUpInput.email}`;
+
+    let i = 1;
+    while (i <= 5) {
+      const uniqueUsername = generateUsername();
+
+      const user = await this.findOne({ username: uniqueUsername });
+
+      if (!user) {
+        username = uniqueUsername;
+        break;
+      }
+
+      i++;
+    }
+
+    const payload = {
+      ...signUpInput,
+      username,
+      password: hashPassword,
+    };
+
+    return this.userModel.create(payload, options);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  findOne(condition = {}, options = {}) {
+    return this.userModel.findOne({
+      where: condition,
+      ...options,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  generateToken({ id, email }: { id: string; email: string }) {
+    const token = sign(
+      {
+        id,
+        email,
+      },
+      applicationConfig.jwt.secret,
+      {
+        expiresIn: applicationConfig.jwt.expiresIn,
+        algorithm: 'HS256',
+        issuer: applicationConfig.jwt.issuer,
+      },
+    );
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
-  }
+    const decodedToken = decode(token) as JwtPayload;
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return {
+      token,
+      expiresIn: decodedToken.exp - decodedToken.iat,
+    };
   }
 }
