@@ -13,11 +13,14 @@ import {
   UserAlreadyExistError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
+import { Public } from 'src/auth/decorators/public';
+import { CurrentUser } from 'src/auth/decorators/currentUser';
 
 @Resolver('User')
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
   @Mutation('signUp')
   async signUp(@Args('signUpInput') signUpInput: SignUpInput): Promise<string> {
     try {
@@ -40,6 +43,7 @@ export class UsersResolver {
     }
   }
 
+  @Public()
   @Mutation('signIn')
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
@@ -88,9 +92,15 @@ export class UsersResolver {
   }
 
   @Query('me')
-  async me() {
+  async me(@CurrentUser() currentUser: User) {
     try {
-      return '1';
+      const user = await this.usersService.findOne({ id: currentUser.id });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
+
+      return user;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
