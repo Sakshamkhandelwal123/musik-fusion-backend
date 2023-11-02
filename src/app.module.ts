@@ -9,6 +9,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 
 import { applicationConfig } from 'config';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
@@ -51,6 +52,7 @@ import { CommonModule } from './common/common.module';
       synchronize: true,
       fieldResolverEnhancers: ['guards'],
     }),
+    AuthModule,
     UsersModule,
     CommonModule,
   ],
