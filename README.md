@@ -76,4 +76,9 @@ SPOTIFY_CLIENT_ID= # Spotify development client id
 SPOTIFY_CLIENT_SECRET= # Spotify development client secret
 ```
 
+### JWT   
+```
+JWT_SECRET= # Jwt secret for authentication
+```
+
 Make sure to replace the placeholder values with your own values before starting the application.
