@@ -78,7 +78,7 @@ SPOTIFY_CLIENT_SECRET= # Spotify development client secret
 
 ### JWT   
 ```
-JWT_SECRET= # Jwt secret for authentication
+JWT_SECRET= # The private key used to sign JWTs
 ```
 
 Make sure to replace the placeholder values with your own values before starting the application.
