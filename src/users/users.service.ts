@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { SignUpInput } from './dto/signup.input';
 import { generateUsername } from 'src/utils/username-generator';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
+import { generateOtp } from 'src/utils/otp-generator';
 
 @Injectable()
 export class UsersService {
@@ -39,10 +40,13 @@ export class UsersService {
       i++;
     }
 
+    const emailOtp = generateOtp();
+
     const payload = {
       ...signUpInput,
       username,
       password: hashPassword,
+      emailOtp,
     };
 
     return this.userModel.create(payload, options);

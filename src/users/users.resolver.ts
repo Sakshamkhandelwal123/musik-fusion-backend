@@ -15,10 +15,14 @@ import {
   UserAlreadyExistError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
+import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 
 @Resolver('User')
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly sendgridService: SendgridService,
+  ) {}
 
   @Public()
   @Mutation('signUp')
@@ -32,9 +36,14 @@ export class UsersResolver {
         throw new UserAlreadyExistError();
       }
 
-      await this.usersService.createUser(signUpInput);
+      const newUser = await this.usersService.createUser(signUpInput);
 
-      return 'We have send a verification email. Please verify you email to continue!!!';
+      await this.sendgridService.sendEmail(email, {
+        otp: newUser.emailOtp,
+        templateName: 'EMAIL_VERIFICATION',
+      });
+
+      return 'We have send a verification email. Please verify your email to continue.';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

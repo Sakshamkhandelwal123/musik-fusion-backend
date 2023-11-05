@@ -29,4 +29,9 @@ export const applicationConfig = {
     expiresIn: '24h',
     issuer: 'musik-fusion',
   },
+
+  sendgrid: {
+    senderEmail: process.env.SENDGRID_SENDER_EMAIL,
+    sendgridApiKey: process.env.SENDGRID_API_KEY,
+  },
 };

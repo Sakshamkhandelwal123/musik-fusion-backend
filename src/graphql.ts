@@ -14,8 +14,8 @@ export interface SignInInput {
 }
 
 export interface SignUpInput {
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
 }
