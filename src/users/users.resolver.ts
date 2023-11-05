@@ -9,13 +9,13 @@ import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 import {
   EmailNotVerifiedError,
   InvalidUserError,
   UserAlreadyExistError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
-import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 
 @Resolver('User')
 export class UsersResolver {
