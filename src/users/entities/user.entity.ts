@@ -45,6 +45,9 @@ export class User extends Model {
   @Column({ allowNull: false })
   password: string;
 
+  @Column({ allowNull: true })
+  emailOtp: number;
+
   @Column({ allowNull: false })
   @CreatedAt
   createdAt: Date;
