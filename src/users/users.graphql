@@ -2,8 +2,8 @@ scalar Date
 
 type User {
   id: String!
-  firstname: String!
-  lastname: String!
+  firstName: String!
+  lastName: String!
   username: String
   email: String!
   isEmailVerified: Boolean!
@@ -25,8 +25,8 @@ input SignInInput {
 }
 
 input SignUpInput {
-  firstname: String!
-  lastname: String!
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
 }

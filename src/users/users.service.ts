@@ -6,6 +6,7 @@ import { applicationConfig } from 'config';
 import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { SignUpInput } from './dto/signup.input';
+import { generateOtp } from 'src/utils/otp-generator';
 import { generateUsername } from 'src/utils/username-generator';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
 
@@ -39,10 +40,13 @@ export class UsersService {
       i++;
     }
 
+    const emailOtp = generateOtp();
+
     const payload = {
       ...signUpInput,
       username,
       password: hashPassword,
+      emailOtp,
     };
 
     return this.userModel.create(payload, options);

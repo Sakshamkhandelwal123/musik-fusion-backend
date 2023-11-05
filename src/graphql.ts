@@ -14,16 +14,16 @@ export interface SignInInput {
 }
 
 export interface SignUpInput {
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
 }
 
 export interface User {
     id: string;
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     username?: Nullable<string>;
     email: string;
     isEmailVerified: boolean;
