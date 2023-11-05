@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^10.2.7",
     "@nestjs/sequelize": "^10.0.0",
     "@nestjs/swagger": "^7.1.13",
+    "@sendgrid/mail": "^7.7.0",
     "axios": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "check-password-strength": "^2.0.7",
