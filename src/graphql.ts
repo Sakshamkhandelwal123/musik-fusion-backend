@@ -22,8 +22,8 @@ export interface SignUpInput {
 
 export interface User {
     id: string;
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     username?: Nullable<string>;
     email: string;
     isEmailVerified: boolean;
