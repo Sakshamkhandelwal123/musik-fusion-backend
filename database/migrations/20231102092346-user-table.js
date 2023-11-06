@@ -31,10 +31,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      is_phone_number_verified: {
-        type: Sequelize.BOOLEAN,
-        allowNull: true,
-      },
       username: {
         type: Sequelize.STRING,
         allowNull: true,

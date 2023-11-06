@@ -8,7 +8,6 @@ type User {
   email: String!
   isEmailVerified: Boolean!
   phoneNumber: String
-  isPhoneNumberVerified: Boolean
   createdAt: Date!
   updatedAt: Date!
 }

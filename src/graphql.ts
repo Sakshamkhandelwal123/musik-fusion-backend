@@ -28,7 +28,6 @@ export interface User {
     email: string;
     isEmailVerified: boolean;
     phoneNumber?: Nullable<string>;
-    isPhoneNumberVerified?: Nullable<boolean>;
     createdAt: Date;
     updatedAt: Date;
 }

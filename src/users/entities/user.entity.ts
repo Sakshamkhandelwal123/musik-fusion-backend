@@ -36,9 +36,6 @@ export class User extends Model {
   @Column({ allowNull: true })
   phoneNumber: string;
 
-  @Column({ allowNull: true })
-  isPhoneNumberVerified: boolean;
-
   @Column({ allowNull: true, unique: true })
   username: string;
 
