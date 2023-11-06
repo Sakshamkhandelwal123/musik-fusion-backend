@@ -17,11 +17,11 @@
 | :---------------------- | :----------------: | :----------------------------------------- |
 | signIn                  |        :x:         | email, password                            |
 | signUp                  |        :x:         | firstName, lastName, email, password       |
-| resetPassword           |        :x:         | newPassword                                |
-| changePassword          | :white_check_mark: | newPassword                                |
-| verifyPhoneNumber       |        :x:         | phoneNumber, otp                           |
+| forgotPassword          |        :x:         | email                                      |
+| verifyNewPassword       |        :x:         | email, otp, newPassword                    |
+| resetPassword           | :white_check_mark: | email                                      |
 | verifyEmail             |        :x:         | email, otp                                 |
-| resendOtp               |        :x:         | phoneNumber                                |
+| resendOtp               |        :x:         | email                                      |
 | resendVerificationEmail |        :x:         | email                                      |
 | updateUserProfile       | :white_check_mark: | username, firstName, lastName, phoneNumber |
 | deleteUserAccount       | :white_check_mark: | username                                   |
