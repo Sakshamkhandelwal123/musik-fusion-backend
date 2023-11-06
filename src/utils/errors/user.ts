@@ -83,3 +83,15 @@ export class BreachOfPasswordPolicyError extends HttpException {
     );
   }
 }
+
+export class InvalidOTPError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Invalid OTP',
+        code: 'INVALID_OTP',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}

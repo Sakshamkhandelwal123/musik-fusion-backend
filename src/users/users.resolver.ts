@@ -7,11 +7,13 @@ import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
+import { generateOtp } from 'src/utils/otp-generator';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 import {
   EmailNotVerifiedError,
+  InvalidOTPError,
   InvalidUserError,
   UserAlreadyExistError,
   WrongPasswordError,
@@ -92,6 +94,55 @@ export class UsersResolver {
       };
 
       return response;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @Mutation('forgotPassword')
+  async forgotPassword(email: string) {
+    try {
+      const user = await this.usersService.findOne({ email });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
+
+      const emailOtp = generateOtp();
+
+      await this.usersService.update({ emailOtp }, { id: user.id });
+
+      await this.sendgridService.sendEmail(email, {
+        otp: emailOtp,
+        templateName: 'PASSWORD_VERIFICATION',
+      });
+
+      return 'We have send an OTP to your email. Please verify the OTP to continue.';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @Mutation('verifyNewPassword')
+  async verifyNewPassword(email: string, otp: number, newPassword: string) {
+    try {
+      const user = await this.usersService.findOne({ email });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
+
+      if (user.emailOtp !== otp) {
+        throw new InvalidOTPError();
+      }
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
