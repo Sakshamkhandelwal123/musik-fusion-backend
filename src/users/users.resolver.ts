@@ -143,6 +143,8 @@ export class UsersResolver {
       if (user.emailOtp !== otp) {
         throw new InvalidOTPError();
       }
+
+      return 'Done';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
