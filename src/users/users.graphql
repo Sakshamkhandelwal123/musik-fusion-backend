@@ -38,4 +38,6 @@ type Query {
 type Mutation {
   signIn(signInInput: SignInInput!): SignInResponse!
   signUp(signUpInput: SignUpInput!): String!
+  forgotPassword(email: String!): String!
+  verifyNewPassword(email: String!, otp: Int!, newPassword: String!): String!
 }

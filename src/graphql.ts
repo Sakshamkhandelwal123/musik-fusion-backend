@@ -46,6 +46,8 @@ export interface IQuery {
 export interface IMutation {
     signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
+    forgotPassword(email: string): string | Promise<string>;
+    verifyNewPassword(email: string, otp: number, newPassword: string): string | Promise<string>;
 }
 
 type Nullable<T> = T | null;
