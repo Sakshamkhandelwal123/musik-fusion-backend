@@ -9,10 +9,12 @@ import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
 import { generateOtp } from 'src/utils/otp-generator';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
+import { VerifyEmailInput } from './dto/verify-email.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { WrongInputValueError } from 'src/utils/errors/common';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
 import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
+import { VerifyNewPasswordInput } from './dto/verify-new-password.input';
 import {
   EmailNotVerifiedError,
   InvalidOTPError,
@@ -102,7 +104,7 @@ export class UsersResolver {
 
   @Public()
   @Mutation('forgotPassword')
-  async forgotPassword(email: string) {
+  async forgotPassword(@Args('email') email: string) {
     try {
       const user = await this.usersService.findOne({ email });
 
@@ -131,24 +133,32 @@ export class UsersResolver {
 
   @Public()
   @Mutation('verifyNewPassword')
-  async verifyNewPassword(email: string, otp: number, newPassword: string) {
+  async verifyNewPassword(
+    @Args('verifyNewPasswordInput')
+    verifyNewPasswordInput: VerifyNewPasswordInput,
+  ) {
     try {
-      const user = await this.usersService.findOne({ email });
+      const user = await this.usersService.findOne({
+        email: verifyNewPasswordInput.email,
+      });
 
       if (!user) {
         throw new InvalidUserError();
       }
 
-      if (user.emailOtp !== otp) {
+      if (user.emailOtp !== verifyNewPasswordInput.otp) {
         throw new InvalidOTPError();
       }
 
-      validatePasswordStrength(newPassword);
+      validatePasswordStrength(verifyNewPasswordInput.newPassword);
 
-      const hashPassword = await hash(newPassword, await genSalt());
+      const hashPassword = await hash(
+        verifyNewPasswordInput.newPassword,
+        await genSalt(),
+      );
 
       await this.usersService.update(
-        { password: hashPassword },
+        { password: hashPassword, emailOtp: null },
         { id: user.id },
       );
 
@@ -185,19 +195,26 @@ export class UsersResolver {
 
   @Public()
   @Mutation('verifyEmail')
-  async verifyEmail(email: string, otp: number) {
+  async verifyEmail(
+    @Args('verifyEmailInput') verifyEmailInput: VerifyEmailInput,
+  ) {
     try {
-      const user = await this.usersService.findOne({ email });
+      const user = await this.usersService.findOne({
+        email: verifyEmailInput.email,
+      });
 
       if (!user) {
         throw new InvalidUserError();
       }
 
-      if (user.emailOtp !== otp) {
+      if (user.emailOtp !== verifyEmailInput.otp) {
         throw new InvalidOTPError();
       }
 
-      await this.usersService.update({ emailOtp: null }, { id: user.id });
+      await this.usersService.update(
+        { emailOtp: null, isEmailVerified: true },
+        { id: user.id },
+      );
 
       return 'Email Verification Successful!!!';
     } catch (error) {
@@ -210,7 +227,7 @@ export class UsersResolver {
 
   @Public()
   @Mutation('resendVerificationEmail')
-  async resendVerificationEmail(email: string) {
+  async resendVerificationEmail(@Args('email') email: string) {
     try {
       const user = await this.usersService.findOne({ email });
 
@@ -237,9 +254,14 @@ export class UsersResolver {
   }
 
   @Mutation('deleteUserAccount')
-  async deleteUserAccount(@CurrentUser() currentUser: User, username: string) {
+  async deleteUserAccount(
+    @CurrentUser() currentUser: User,
+    @Args('username') username: string,
+  ) {
     try {
-      if (currentUser.username !== username) {
+      const user = await this.usersService.findOne({ id: currentUser.id });
+
+      if (user.username !== username) {
         throw new WrongInputValueError();
       }
 
