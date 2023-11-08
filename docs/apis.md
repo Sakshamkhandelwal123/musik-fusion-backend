@@ -21,7 +21,6 @@
 | verifyNewPassword       |        :x:         | email, otp, newPassword                    |
 | resetPassword           | :white_check_mark: | email                                      |
 | verifyEmail             |        :x:         | email, otp                                 |
-| resendOtp               |        :x:         | email                                      |
 | resendVerificationEmail |        :x:         | email                                      |
 | updateUserProfile       | :white_check_mark: | username, firstName, lastName, phoneNumber |
 | deleteUserAccount       | :white_check_mark: | username                                   |
