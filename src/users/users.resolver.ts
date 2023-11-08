@@ -16,6 +16,7 @@ import { validatePasswordStrength } from 'src/utils/validation-checks';
 import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 import { VerifyNewPasswordInput } from './dto/verify-new-password.input';
 import {
+  EmailAlreadyVerifiedError,
   EmailNotVerifiedError,
   InvalidOTPError,
   InvalidUserError,
@@ -207,6 +208,10 @@ export class UsersResolver {
         throw new InvalidUserError();
       }
 
+      if (user.isEmailVerified) {
+        throw new EmailAlreadyVerifiedError();
+      }
+
       if (user.emailOtp !== verifyEmailInput.otp) {
         throw new InvalidOTPError();
       }
@@ -233,6 +238,10 @@ export class UsersResolver {
 
       if (!user) {
         throw new InvalidUserError();
+      }
+
+      if (user.isEmailVerified) {
+        throw new EmailAlreadyVerifiedError();
       }
 
       const emailOtp = generateOtp();
