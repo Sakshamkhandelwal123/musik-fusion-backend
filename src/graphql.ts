@@ -20,6 +20,17 @@ export interface SignUpInput {
     password: string;
 }
 
+export interface VerifyEmailInput {
+    email: string;
+    otp: number;
+}
+
+export interface VerifyNewPasswordInput {
+    email: string;
+    otp: number;
+    newPassword: string;
+}
+
 export interface User {
     id: string;
     firstName: string;
@@ -48,10 +59,10 @@ export interface IMutation {
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
     deleteUserAccount(username: string): string | Promise<string>;
-    verifyEmail(email: string, otp: number): string | Promise<string>;
+    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
     resendVerificationEmail(email: string): string | Promise<string>;
     signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
-    verifyNewPassword(email: string, otp: number, newPassword: string): string | Promise<string>;
+    verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
 }
 
 type Nullable<T> = T | null;
