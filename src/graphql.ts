@@ -44,9 +44,13 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
-    signUp(signUpInput: SignUpInput): string | Promise<string>;
+    resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
+    signUp(signUpInput: SignUpInput): string | Promise<string>;
+    deleteUserAccount(username: string): string | Promise<string>;
+    verifyEmail(email: string, otp: number): string | Promise<string>;
+    resendVerificationEmail(email: string): string | Promise<string>;
+    signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
     verifyNewPassword(email: string, otp: number, newPassword: string): string | Promise<string>;
 }
 
