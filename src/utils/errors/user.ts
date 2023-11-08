@@ -24,6 +24,18 @@ export class EmailNotVerifiedError extends HttpException {
   }
 }
 
+export class EmailAlreadyVerifiedError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Email already verified',
+        code: 'EMAIL_ALREADY_VERIFIED',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
 export class WrongPasswordError extends HttpException {
   constructor() {
     super(
@@ -78,6 +90,18 @@ export class BreachOfPasswordPolicyError extends HttpException {
       {
         message: 'Password policy not met',
         code: 'BREACH_OF_PASSWORD_POLICY',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class InvalidOTPError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Invalid OTP',
+        code: 'INVALID_OTP',
       },
       HttpStatus.BAD_REQUEST,
     );

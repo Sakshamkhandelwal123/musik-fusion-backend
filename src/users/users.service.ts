@@ -7,6 +7,7 @@ import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { SignUpInput } from './dto/signup.input';
 import { generateOtp } from 'src/utils/otp-generator';
+import { UpdateUserInput } from './dto/update-user.input';
 import { generateUsername } from 'src/utils/username-generator';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
 
@@ -56,6 +57,20 @@ export class UsersService {
     return this.userModel.findOne({
       where: condition,
       ...options,
+    });
+  }
+
+  async update(payload: UpdateUserInput, condition = {}, options = {}) {
+    return this.userModel.update(payload, {
+      where: condition,
+      ...options,
+      returning: true,
+    });
+  }
+
+  remove(condition = {}) {
+    return this.userModel.destroy({
+      where: condition,
     });
   }
 

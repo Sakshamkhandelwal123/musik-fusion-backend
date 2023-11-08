@@ -18,6 +18,7 @@ export class SendgridService {
       templateId: emailTemplates[data.templateName],
       dynamic_template_data: {
         otp: data.otp,
+        recoveryOption: data.recoveryOption,
       },
     };
   }

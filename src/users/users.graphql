@@ -30,12 +30,29 @@ input SignUpInput {
   password: String!
 }
 
+input VerifyEmailInput {
+  email: String!
+  otp: Int!
+}
+
+input VerifyNewPasswordInput {
+  email: String!
+  otp: Int!
+  newPassword: String!
+}
+
 type Query {
   me: User!
   getUserByUsername(username: String!): User!
 }
 
 type Mutation {
-  signIn(signInInput: SignInInput!): SignInResponse!
+  resetPassword: String!
+  forgotPassword(email: String!): String!
   signUp(signUpInput: SignUpInput!): String!
+  deleteUserAccount(username: String!): String!
+  verifyEmail(verifyEmailInput: VerifyEmailInput!): String!
+  resendVerificationEmail(email: String!): String! 
+  signIn(signInInput: SignInInput!): SignInResponse!
+  verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput!): String!
 }
