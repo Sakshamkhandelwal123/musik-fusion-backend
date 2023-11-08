@@ -24,6 +24,18 @@ export class EmailNotVerifiedError extends HttpException {
   }
 }
 
+export class EmailAlreadyVerifiedError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Email already verified',
+        code: 'EMAIL_ALREADY_VERIFIED',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
 export class WrongPasswordError extends HttpException {
   constructor() {
     super(
