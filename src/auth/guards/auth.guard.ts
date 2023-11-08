@@ -11,12 +11,15 @@ import {
 
 import { applicationConfig } from 'config';
 import { IS_PUBLIC_KEY } from '../decorators/public';
+import { UsersService } from 'src/users/users.service';
+import { InvalidUserError } from 'src/utils/errors/user';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private readonly usersService: UsersService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -48,6 +51,14 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: applicationConfig.jwt.secret,
       });
+
+      const user = await this.usersService.findOne({
+        id: payload.id,
+      });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
 
       request['user'] = payload;
     } catch {
