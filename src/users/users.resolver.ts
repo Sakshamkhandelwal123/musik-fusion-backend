@@ -1,4 +1,4 @@
-import { compare } from 'bcryptjs';
+import { compare, genSalt, hash } from 'bcryptjs';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 
@@ -10,6 +10,8 @@ import { Public } from 'src/auth/decorators/public';
 import { generateOtp } from 'src/utils/otp-generator';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { WrongInputValueError } from 'src/utils/errors/common';
+import { validatePasswordStrength } from 'src/utils/validation-checks';
 import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 import {
   EmailNotVerifiedError,
@@ -62,15 +64,11 @@ export class UsersResolver {
     try {
       const { email, password } = signInInput;
 
-      console.log(email, password);
-
       const user = await this.usersService.findOne({ email });
 
       if (!user) {
         throw new InvalidUserError();
       }
-
-      console.log(user);
 
       if (user && !user.isEmailVerified) {
         throw new EmailNotVerifiedError();
@@ -118,6 +116,7 @@ export class UsersResolver {
 
       await this.sendgridService.sendEmail(email, {
         otp: emailOtp,
+        recoveryOption: 'Recover',
         templateName: 'PASSWORD_VERIFICATION',
       });
 
@@ -144,7 +143,109 @@ export class UsersResolver {
         throw new InvalidOTPError();
       }
 
-      return 'Done';
+      validatePasswordStrength(newPassword);
+
+      const hashPassword = await hash(newPassword, await genSalt());
+
+      await this.usersService.update(
+        { password: hashPassword },
+        { id: user.id },
+      );
+
+      return 'Password Changed!!!';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('resetPassword')
+  async resetPassword(@CurrentUser() currentUser: User) {
+    try {
+      const emailOtp = generateOtp();
+
+      await this.usersService.update({ emailOtp }, { id: currentUser.id });
+
+      await this.sendgridService.sendEmail(currentUser.email, {
+        otp: emailOtp,
+        recoveryOption: 'Reset',
+        templateName: 'PASSWORD_VERIFICATION',
+      });
+
+      return 'We have send an OTP to your email. Please verify the OTP to continue.';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @Mutation('verifyEmail')
+  async verifyEmail(email: string, otp: number) {
+    try {
+      const user = await this.usersService.findOne({ email });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
+
+      if (user.emailOtp !== otp) {
+        throw new InvalidOTPError();
+      }
+
+      await this.usersService.update({ emailOtp: null }, { id: user.id });
+
+      return 'Email Verification Successful!!!';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @Mutation('resendVerificationEmail')
+  async resendVerificationEmail(email: string) {
+    try {
+      const user = await this.usersService.findOne({ email });
+
+      if (!user) {
+        throw new InvalidUserError();
+      }
+
+      const emailOtp = generateOtp();
+
+      await this.usersService.update({ emailOtp }, { id: user.id });
+
+      await this.sendgridService.sendEmail(email, {
+        otp: emailOtp,
+        templateName: 'EMAIL_VERIFICATION',
+      });
+
+      return 'We have send a verification email. Please verify your email to continue.';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('deleteUserAccount')
+  async deleteUserAccount(@CurrentUser() currentUser: User, username: string) {
+    try {
+      if (currentUser.username !== username) {
+        throw new WrongInputValueError();
+      }
+
+      await this.usersService.remove({ id: currentUser.id });
+
+      return 'Account deleted successfully!!!';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

@@ -7,9 +7,9 @@ import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { SignUpInput } from './dto/signup.input';
 import { generateOtp } from 'src/utils/otp-generator';
+import { UpdateUserInput } from './dto/update-user.input';
 import { generateUsername } from 'src/utils/username-generator';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
-import { UpdateUserInput } from './dto/update-user.input';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +65,12 @@ export class UsersService {
       where: condition,
       ...options,
       returning: true,
+    });
+  }
+
+  remove(condition = {}) {
+    return this.userModel.destroy({
+      where: condition,
     });
   }
 
