@@ -25,6 +25,7 @@ Made by combining music and fusion, Musikfusion is a web application that gives 
 5. GraphQL   
 6. PostgreSQL   
 7. Sequelize   
+8. Sendgrid   
 
 ## Installation
 
