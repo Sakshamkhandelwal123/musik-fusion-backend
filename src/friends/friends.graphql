@@ -1,0 +1,34 @@
+scalar Date
+
+type Friend {
+  id: String!
+  userId: String!
+  followingUserId: String!
+  isFriend: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+input FriendUnfriendInput {
+  followingUserId: String!
+  isFriend: Boolean!
+}
+
+input FollowUserInput {
+  followingUserId: String!
+}
+
+input UnFollowUserInput {
+  followingUserId: String!
+}
+
+type Query {
+  friends: [Friend]!
+  friend(id: Int!): Friend
+}
+
+type Mutation {
+  followUser(followUserInput: FollowUserInput!): String!
+  unFollowUser(unFollowUserInput: UnFollowUserInput!): String!
+  friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput!): Friend!
+}
