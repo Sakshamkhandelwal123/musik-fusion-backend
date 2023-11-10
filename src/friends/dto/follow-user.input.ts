@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class FollowUserInput {
   @IsString()
@@ -11,4 +11,8 @@ export class CreateFollowerInput {
 
   @IsString()
   followingUserId: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isFriend?: boolean;
 }
