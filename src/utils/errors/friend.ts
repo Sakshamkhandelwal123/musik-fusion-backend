@@ -23,3 +23,27 @@ export class UserAlreadyUnFollowedError extends HttpException {
     );
   }
 }
+
+export class UserAlreadyFriendError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You are already a friend of this user',
+        code: 'USER_ALREADY_FRIEND',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class UserAlreadyNotFriendError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You are already not a friend of this user',
+        code: 'USER_ALREADY_NOT_FRIEND',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
