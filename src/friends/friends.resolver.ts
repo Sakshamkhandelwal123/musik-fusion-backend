@@ -10,6 +10,8 @@ import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
 import {
   UserAlreadyFollowedError,
+  UserAlreadyFriendError,
+  UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
 
@@ -18,11 +20,46 @@ export class FriendsResolver {
   constructor(private readonly friendsService: FriendsService) {}
 
   @Mutation('friendUnfriendAUser')
-  friendUnfriendAUser(
+  async friendUnfriendAUser(
     @CurrentUser() currentUser: User,
     @Args('friendUnfriendInput') friendUnfriendInput: FriendUnfriendInput,
   ) {
     try {
+      const { isFriend } = friendUnfriendInput;
+
+      const follower = await this.friendsService.findOne({
+        userId: currentUser.id,
+        followingUserId: friendUnfriendInput.followingUserId,
+      });
+
+      if (isFriend) {
+        if (follower && follower.isFriend) {
+          throw new UserAlreadyFriendError();
+        }
+
+        if (follower && !follower.isFriend) {
+          await this.friendsService.update(
+            { isFriend },
+            {
+              userId: currentUser.id,
+              followingUserId: friendUnfriendInput.followingUserId,
+            },
+          );
+        } else {
+          const createFriendInput = {
+            userId: currentUser.id,
+            ...friendUnfriendInput,
+          };
+
+          await this.friendsService.create(createFriendInput);
+        }
+
+        return 'You become friend of each other';
+      }
+
+      if (follower) {
+        throw new UserAlreadyNotFriendError();
+      }
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

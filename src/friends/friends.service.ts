@@ -26,7 +26,13 @@ export class FriendsService {
     });
   }
 
-  update(payload = {}, condition = {}) {}
+  update(payload = {}, condition = {}, options = {}) {
+    return this.friendModel.update(payload, {
+      where: condition,
+      ...options,
+      returning: true,
+    });
+  }
 
   remove(condition = {}) {
     return this.friendModel.destroy({
