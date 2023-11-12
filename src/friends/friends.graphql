@@ -23,12 +23,13 @@ input UnFollowUserInput {
 }
 
 type Query {
-  friends: [Friend]!
-  friend(id: Int!): Friend
+  getUserFollowers(username: String!): [User!]!
+  getUserFollowing(username: String!): [User!]!
+  getUserFriends(username: String!): [User!]!
 }
 
 type Mutation {
   followUser(followUserInput: FollowUserInput!): String!
   unFollowUser(unFollowUserInput: UnFollowUserInput!): String!
-  friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput!): Friend!
+  friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput!): String!
 }

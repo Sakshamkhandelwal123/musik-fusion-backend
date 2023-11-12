@@ -54,8 +54,9 @@ export interface Friend {
 }
 
 export interface IQuery {
-    friends(): Nullable<Friend>[] | Promise<Nullable<Friend>[]>;
-    friend(id: number): Nullable<Friend> | Promise<Nullable<Friend>>;
+    getUserFollowers(username: string): User[] | Promise<User[]>;
+    getUserFollowing(username: string): User[] | Promise<User[]>;
+    getUserFriends(username: string): User[] | Promise<User[]>;
     me(): User | Promise<User>;
     getUserByUsername(username: string): User | Promise<User>;
 }
@@ -63,7 +64,7 @@ export interface IQuery {
 export interface IMutation {
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
-    friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): Friend | Promise<Friend>;
+    friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
