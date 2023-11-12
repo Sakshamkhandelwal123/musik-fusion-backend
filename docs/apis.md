@@ -10,6 +10,7 @@
 | getUserByUsername |        :x:         | username      |
 | getUserFollowers  |        :x:         | username      |
 | getUserFollowing  |        :x:         | username      |
+| getUserFriends    |        :x:         | username      |
 
 ### Mutation
 
