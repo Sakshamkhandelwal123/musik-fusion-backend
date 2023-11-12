@@ -15,8 +15,11 @@ export class FriendsService {
     return this.friendModel.create({ ...createFollowerInput });
   }
 
-  findAll() {
-    return `This action returns all friends`;
+  findAll(condition = {}, options = {}) {
+    return this.friendModel.findAll({
+      where: condition,
+      ...options,
+    });
   }
 
   findOne(condition = {}, options = {}) {
