@@ -8,6 +8,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum FriendRequestStatus {
+    ACCEPTED = "ACCEPTED",
+    REJECTED = "REJECTED",
+    PENDING = "PENDING"
+}
+
 export interface FriendUnfriendInput {
     followingUserId: string;
     isFriend: boolean;
@@ -62,9 +68,9 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    acceptFriendRequest(frienduserId: string): string | Promise<string>;
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
+    handleFriendRequest(friendUserId: string, status: FriendRequestStatus): string | Promise<string>;
     sendFriendRequest(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;

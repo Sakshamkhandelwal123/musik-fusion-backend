@@ -22,6 +22,12 @@ input UnFollowUserInput {
   followingUserId: String!
 }
 
+enum FriendRequestStatus {
+  ACCEPTED
+  REJECTED
+  PENDING
+}
+
 type Query {
   getUserFollowers(username: String!): [User!]!
   getUserFollowing(username: String!): [User!]!
@@ -29,8 +35,8 @@ type Query {
 }
 
 type Mutation {
-  acceptFriendRequest(frienduserId: String!): String!
   followUser(followUserInput: FollowUserInput!): String!
   unFollowUser(unFollowUserInput: UnFollowUserInput!): String!
+  handleFriendRequest(friendUserId: String!, status: FriendRequestStatus!): String!
   sendFriendRequest(friendUnfriendInput: FriendUnfriendInput!): String!
 }
