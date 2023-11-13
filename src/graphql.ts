@@ -62,9 +62,10 @@ export interface IQuery {
 }
 
 export interface IMutation {
+    acceptFriendRequest(frienduserId: string): string | Promise<string>;
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
-    friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
+    sendFriendRequest(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;

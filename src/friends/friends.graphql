@@ -29,7 +29,8 @@ type Query {
 }
 
 type Mutation {
+  acceptFriendRequest(frienduserId: String!): String!
   followUser(followUserInput: FollowUserInput!): String!
   unFollowUser(unFollowUserInput: UnFollowUserInput!): String!
-  friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput!): String!
+  sendFriendRequest(friendUnfriendInput: FriendUnfriendInput!): String!
 }
