@@ -23,6 +23,10 @@ module.exports = {
         defaultValue: false,
         allowNull: false,
       },
+      friend_request_status: {
+        type: Sequelize.ENUM('ACCEPTED', 'REJECTED', 'PENDING'),
+        allowNull: true,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
