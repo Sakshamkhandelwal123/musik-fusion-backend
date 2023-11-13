@@ -47,3 +47,15 @@ export class UserAlreadyNotFriendError extends HttpException {
     );
   }
 }
+
+export class FriendRequestStatusError extends HttpException {
+  constructor(status = '') {
+    super(
+      {
+        message: `Friend request already ${status}`,
+        code: 'FRIEND_REQUEST_STATUS',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}

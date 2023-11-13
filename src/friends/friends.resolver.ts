@@ -12,11 +12,13 @@ import { UnFollowUserInput } from './dto/unfollow-user.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
 import {
+  FriendRequestStatusError,
   UserAlreadyFollowedError,
   UserAlreadyFriendError,
   UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
+import { FriendRequestStatus } from './entities/friend.entity';
 
 @Resolver('Friend')
 export class FriendsResolver {
@@ -76,13 +78,33 @@ export class FriendsResolver {
     }
   }
 
-  @Mutation('acceptFriendRequest')
-  async acceptFriendRequest(
+  @Mutation('handleFriendRequest')
+  async handleFriendRequest(
     @CurrentUser() currentUser: User,
-    @Args('frienduserId') frienduserId: string,
+    @Args('friendUserId') friendUserId: string,
+    @Args('status') status: FriendRequestStatus,
   ) {
     try {
-      return 'Done';
+      const request = await this.friendsService.findOne({
+        userId: currentUser.id,
+        followingUserId: friendUserId,
+      });
+
+      if (
+        request.friendRequestStatus === FriendRequestStatus.ACCEPTED ||
+        request.friendRequestStatus === FriendRequestStatus.REJECTED
+      ) {
+        throw new FriendRequestStatusError(
+          request.friendRequestStatus.toLowerCase(),
+        );
+      }
+
+      await this.friendsService.update(
+        { isFriend: true, friendRequestStatus: status },
+        { userId: currentUser.id, followingUserId: friendUserId },
+      );
+
+      return `Friend request ${status.toLowerCase()}`;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
