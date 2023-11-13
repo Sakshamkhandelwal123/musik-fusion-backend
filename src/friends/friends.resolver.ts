@@ -31,7 +31,7 @@ export class FriendsResolver {
   async sendFriendRequest(
     @CurrentUser() currentUser: User,
     @Args('friendUnfriendInput') friendUnfriendInput: FriendUnfriendInput,
-  ) {
+  ): Promise<string> {
     try {
       const { isFriend } = friendUnfriendInput;
 
@@ -83,7 +83,7 @@ export class FriendsResolver {
     @CurrentUser() currentUser: User,
     @Args('friendUserId') friendUserId: string,
     @Args('status') status: FriendRequestStatus,
-  ) {
+  ): Promise<string> {
     try {
       const request = await this.friendsService.findOne({
         userId: currentUser.id,
@@ -117,7 +117,7 @@ export class FriendsResolver {
   async followUser(
     @CurrentUser() currentUser: User,
     @Args('followUserInput') followUserInput: FollowUserInput,
-  ) {
+  ): Promise<string> {
     try {
       const follower = await this.friendsService.findOne({
         userId: currentUser.id,
@@ -148,7 +148,7 @@ export class FriendsResolver {
   async unFollowUser(
     @CurrentUser() currentUser: User,
     @Args('unFollowUserInput') unFollowUserInput: UnFollowUserInput,
-  ) {
+  ): Promise<string> {
     try {
       const follower = await this.friendsService.findOne({
         userId: currentUser.id,
@@ -177,7 +177,7 @@ export class FriendsResolver {
 
   @Public()
   @Query('getUserFollowers')
-  async getUserFollowers(@Args('username') username: string) {
+  async getUserFollowers(@Args('username') username: string): Promise<User[]> {
     try {
       const user = await this.usersService.findOne({ username });
 
@@ -206,7 +206,7 @@ export class FriendsResolver {
 
   @Public()
   @Query('getUserFollowing')
-  async getUserFollowing(@Args('username') username: string) {
+  async getUserFollowing(@Args('username') username: string): Promise<User[]> {
     try {
       const user = await this.usersService.findOne({ username });
 
@@ -235,7 +235,7 @@ export class FriendsResolver {
 
   @Public()
   @Query('getUserFriends')
-  async getUserFriends(@Args('username') username: string) {
+  async getUserFriends(@Args('username') username: string): Promise<User[]> {
     try {
       const user = await this.usersService.findOne({ username });
 
