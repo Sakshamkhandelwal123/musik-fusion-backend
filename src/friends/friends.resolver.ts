@@ -25,8 +25,8 @@ export class FriendsResolver {
     private readonly usersService: UsersService,
   ) {}
 
-  @Mutation('friendUnfriendAUser')
-  async friendUnfriendAUser(
+  @Mutation('sendFriendRequest')
+  async sendFriendRequest(
     @CurrentUser() currentUser: User,
     @Args('friendUnfriendInput') friendUnfriendInput: FriendUnfriendInput,
   ) {
@@ -68,6 +68,21 @@ export class FriendsResolver {
       }
 
       return 'You removed your friend';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('acceptFriendRequest')
+  async acceptFriendRequest(
+    @CurrentUser() currentUser: User,
+    @Args('frienduserId') frienduserId: string,
+  ) {
+    try {
+      return 'Done';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
