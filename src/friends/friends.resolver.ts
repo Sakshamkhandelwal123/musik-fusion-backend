@@ -27,8 +27,8 @@ export class FriendsResolver {
     private readonly usersService: UsersService,
   ) {}
 
-  @Mutation('sendFriendRequest')
-  async sendFriendRequest(
+  @Mutation('friendUnfriendAUser')
+  async friendUnfriendAUser(
     @CurrentUser() currentUser: User,
     @Args('friendUnfriendInput') friendUnfriendInput: FriendUnfriendInput,
   ): Promise<string> {
