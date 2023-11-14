@@ -27,7 +27,7 @@
 | deleteUserAccount       | :white_check_mark: | username                                   |
 | followUser              | :white_check_mark: | followingUserId                            |
 | unFollowUser            | :white_check_mark: | followingUserId                            |
-| sendFriendRequest       | :white_check_mark: | followingUserId, isFriend                  |
+| friendUnfriendAUser     | :white_check_mark: | followingUserId, isFriend                  |
 | handleFriendRequest     | :white_check_mark: | friendUserId, status                       |
 
 ## Rest Apis
