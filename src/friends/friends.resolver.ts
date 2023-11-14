@@ -10,6 +10,7 @@ import { FollowUserInput } from './dto/follow-user.input';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { UnFollowUserInput } from './dto/unfollow-user.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { FriendRequestStatus } from './entities/friend.entity';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
 import {
   FriendRequestStatusError,
@@ -18,7 +19,6 @@ import {
   UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
-import { FriendRequestStatus } from './entities/friend.entity';
 
 @Resolver('Friend')
 export class FriendsResolver {
