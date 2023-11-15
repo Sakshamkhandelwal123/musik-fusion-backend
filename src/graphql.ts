@@ -8,6 +8,14 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export interface CreateChatInput {
+    exampleField?: Nullable<number>;
+}
+
+export interface UpdateChatInput {
+    id: number;
+}
+
 export interface SignInInput {
     email: string;
     password: string;
@@ -31,6 +39,31 @@ export interface VerifyNewPasswordInput {
     newPassword: string;
 }
 
+export interface Chat {
+    exampleField?: Nullable<number>;
+}
+
+export interface IQuery {
+    chats(): Nullable<Chat>[] | Promise<Nullable<Chat>[]>;
+    chat(id: number): Nullable<Chat> | Promise<Nullable<Chat>>;
+    me(): User | Promise<User>;
+    getUserByUsername(username: string): User | Promise<User>;
+}
+
+export interface IMutation {
+    createChat(createChatInput: CreateChatInput): Chat | Promise<Chat>;
+    updateChat(updateChatInput: UpdateChatInput): Chat | Promise<Chat>;
+    removeChat(id: number): Nullable<Chat> | Promise<Nullable<Chat>>;
+    resetPassword(): string | Promise<string>;
+    forgotPassword(email: string): string | Promise<string>;
+    signUp(signUpInput: SignUpInput): string | Promise<string>;
+    deleteUserAccount(username: string): string | Promise<string>;
+    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
+    resendVerificationEmail(email: string): string | Promise<string>;
+    signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
+    verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
+}
+
 export interface User {
     id: string;
     firstName: string;
@@ -47,22 +80,6 @@ export interface SignInResponse {
     user: User;
     accessToken: string;
     expiresIn: number;
-}
-
-export interface IQuery {
-    me(): User | Promise<User>;
-    getUserByUsername(username: string): User | Promise<User>;
-}
-
-export interface IMutation {
-    resetPassword(): string | Promise<string>;
-    forgotPassword(email: string): string | Promise<string>;
-    signUp(signUpInput: SignUpInput): string | Promise<string>;
-    deleteUserAccount(username: string): string | Promise<string>;
-    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
-    resendVerificationEmail(email: string): string | Promise<string>;
-    signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
-    verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
 }
 
 type Nullable<T> = T | null;
