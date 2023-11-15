@@ -34,4 +34,10 @@ export const applicationConfig = {
     senderEmail: process.env.SENDGRID_SENDER_EMAIL,
     sendgridApiKey: process.env.SENDGRID_API_KEY,
   },
+
+  cloudinary: {
+    cloudName: process.env.CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecretKey: process.env.CLOUDINARY_API_SECRET_KEY,
+  },
 };
