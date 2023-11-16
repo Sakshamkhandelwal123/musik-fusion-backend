@@ -68,6 +68,7 @@ export interface IQuery {
 }
 
 export interface IMutation {
+    withdrawFriendRequest(friendUserId: string): string | Promise<string>;
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
     friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
