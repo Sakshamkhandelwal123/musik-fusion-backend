@@ -9,6 +9,35 @@ type Friend {
   updatedAt: Date!
 }
 
+type FriendRequest {
+  id: String!
+  userId: String!
+  followingUserId: String!
+  friendRequestStatus: FriendRequestStatus!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type FriendRequestResponse {
+  total: Int!
+  requests: [FriendRequest!]!
+}
+
+type UserFriendResponse {
+  total: Int!
+  friends: [Friend!]!
+}
+
+type UserFollowingResponse {
+  total: Int!
+  following: [Friend!]!
+}
+
+type UserFollowerResponse {
+  total: Int!
+  followers: [Friend!]!
+}
+
 input FriendUnfriendInput {
   followingUserId: String!
   isFriend: Boolean!
@@ -29,9 +58,10 @@ enum FriendRequestStatus {
 }
 
 type Query {
-  getUserFollowers(username: String!): [User!]!
-  getUserFollowing(username: String!): [User!]!
-  getUserFriends(username: String!): [User!]!
+  getFriendRequests: FriendRequestResponse!
+  getUserFriends(username: String!): UserFriendResponse!
+  getUserFollowers(username: String!): UserFollowerResponse!
+  getUserFollowing(username: String!): UserFollowingResponse!
 }
 
 type Mutation {

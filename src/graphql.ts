@@ -59,10 +59,40 @@ export interface Friend {
     updatedAt: Date;
 }
 
+export interface FriendRequest {
+    id: string;
+    userId: string;
+    followingUserId: string;
+    friendRequestStatus: FriendRequestStatus;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface FriendRequestResponse {
+    total: number;
+    requests: FriendRequest[];
+}
+
+export interface UserFriendResponse {
+    total: number;
+    friends: Friend[];
+}
+
+export interface UserFollowingResponse {
+    total: number;
+    following: Friend[];
+}
+
+export interface UserFollowerResponse {
+    total: number;
+    followers: Friend[];
+}
+
 export interface IQuery {
-    getUserFollowers(username: string): User[] | Promise<User[]>;
-    getUserFollowing(username: string): User[] | Promise<User[]>;
-    getUserFriends(username: string): User[] | Promise<User[]>;
+    getFriendRequests(): FriendRequestResponse | Promise<FriendRequestResponse>;
+    getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
+    getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
+    getUserFollowing(username: string): UserFollowingResponse | Promise<UserFollowingResponse>;
     me(): User | Promise<User>;
     getUserByUsername(username: string): User | Promise<User>;
 }
