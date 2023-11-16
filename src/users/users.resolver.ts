@@ -163,7 +163,7 @@ export class UsersResolver {
         { id: user.id },
       );
 
-      return 'Password Changed!!!';
+      return 'Password changed successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -221,7 +221,7 @@ export class UsersResolver {
         { id: user.id },
       );
 
-      return 'Email Verification Successful!!!';
+      return 'Email verification successful';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -276,7 +276,7 @@ export class UsersResolver {
 
       await this.usersService.remove({ id: currentUser.id });
 
-      return 'Account deleted successfully!!!';
+      return 'Account deleted successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
