@@ -22,6 +22,13 @@ export class FriendsService {
     });
   }
 
+  findAndCountAll(condition = {}, options = {}) {
+    return this.friendModel.findAndCountAll({
+      where: condition,
+      ...options,
+    });
+  }
+
   findOne(condition = {}, options = {}) {
     return this.friendModel.findOne({
       where: condition,

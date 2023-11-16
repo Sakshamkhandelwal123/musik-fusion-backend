@@ -12,7 +12,10 @@ import { UnFollowUserInput } from './dto/unfollow-user.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
 import { FriendRequestsService } from './friend-requests.service';
-import { FriendRequestStatus } from './entities/freind-request.entity';
+import {
+  FriendRequest,
+  FriendRequestStatus,
+} from './entities/freind-request.entity';
 import {
   FriendRequestStatusError,
   NoFriendRequestFoundError,
@@ -21,6 +24,7 @@ import {
   UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
+import { Friend } from './entities/friend.entity';
 
 @Resolver('Friend')
 export class FriendsResolver {
@@ -191,7 +195,7 @@ export class FriendsResolver {
 
       await this.friendsService.create(createFollowerInput);
 
-      return 'User followed successfully!!!';
+      return 'User followed successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -222,7 +226,7 @@ export class FriendsResolver {
 
       await this.friendsService.remove(removeFollowerInput);
 
-      return 'User unfollowed successfully!!!';
+      return 'User unfollowed successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -233,7 +237,9 @@ export class FriendsResolver {
 
   @Public()
   @Query('getUserFollowers')
-  async getUserFollowers(@Args('username') username: string): Promise<User[]> {
+  async getUserFollowers(
+    @Args('username') username: string,
+  ): Promise<{ total: number; followers: Friend[] }> {
     try {
       const user = await this.usersService.findOne({ username });
 
@@ -241,17 +247,11 @@ export class FriendsResolver {
         throw new InvalidUserError();
       }
 
-      const followers = await this.friendsService.findAll({
+      const { count, rows } = await this.friendsService.findAndCountAll({
         followingUserId: user.id,
       });
 
-      const users = await Promise.all(
-        followers.map(async (follower) => {
-          return this.usersService.findOne({ id: follower.userId });
-        }),
-      );
-
-      return users;
+      return { total: count, followers: rows };
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -262,7 +262,9 @@ export class FriendsResolver {
 
   @Public()
   @Query('getUserFollowing')
-  async getUserFollowing(@Args('username') username: string): Promise<User[]> {
+  async getUserFollowing(
+    @Args('username') username: string,
+  ): Promise<{ total: number; following: Friend[] }> {
     try {
       const user = await this.usersService.findOne({ username });
 
@@ -270,17 +272,11 @@ export class FriendsResolver {
         throw new InvalidUserError();
       }
 
-      const followings = await this.friendsService.findAll({
+      const { count, rows } = await this.friendsService.findAndCountAll({
         userId: user.id,
       });
 
-      const users = await Promise.all(
-        followings.map(async (follower) => {
-          return this.usersService.findOne({ id: follower.followingUserId });
-        }),
-      );
-
-      return users;
+      return { total: count, following: rows };
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -289,9 +285,10 @@ export class FriendsResolver {
     }
   }
 
-  @Public()
   @Query('getUserFriends')
-  async getUserFriends(@Args('username') username: string): Promise<User[]> {
+  async getUserFriends(
+    @Args('username') username: string,
+  ): Promise<{ total: number; friends: Friend[] }> {
     try {
       const user = await this.usersService.findOne({ username });
 
@@ -299,18 +296,30 @@ export class FriendsResolver {
         throw new InvalidUserError();
       }
 
-      const friends = await this.friendsService.findAll({
+      const { count, rows } = await this.friendsService.findAndCountAll({
         userId: user.id,
         isFriend: true,
       });
 
-      const users = await Promise.all(
-        friends.map(async (follower) => {
-          return this.usersService.findOne({ id: follower.followingUserId });
-        }),
+      return { total: count, friends: rows };
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
       );
+    }
+  }
 
-      return users;
+  @Query('getFriendRequests')
+  async getFriendRequests(
+    @CurrentUser() currentUser: User,
+  ): Promise<{ total: number; requests: FriendRequest[] }> {
+    try {
+      const { count, rows } = await this.friendRequestsService.findAndCountAll({
+        userId: currentUser.id,
+      });
+
+      return { total: count, requests: rows };
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
