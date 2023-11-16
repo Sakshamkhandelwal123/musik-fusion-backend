@@ -29,6 +29,7 @@
 | unFollowUser            | :white_check_mark: | followingUserId                            |
 | friendUnfriendAUser     | :white_check_mark: | followingUserId, isFriend                  |
 | handleFriendRequest     | :white_check_mark: | friendUserId, status                       |
+| withdrawFriendRequest   | :white_check_mark: | friendUserId                               |
 
 ## Rest Apis
 
