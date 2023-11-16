@@ -10,10 +10,12 @@ import { FollowUserInput } from './dto/follow-user.input';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { UnFollowUserInput } from './dto/unfollow-user.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
-import { FriendRequestStatus } from './entities/friend.entity';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
+import { FriendRequestsService } from './friend-requests.service';
+import { FriendRequestStatus } from './entities/freind-request.entity';
 import {
   FriendRequestStatusError,
+  NoFriendRequestFoundError,
   UserAlreadyFollowedError,
   UserAlreadyFriendError,
   UserAlreadyNotFriendError,
@@ -23,8 +25,9 @@ import {
 @Resolver('Friend')
 export class FriendsResolver {
   constructor(
-    private readonly friendsService: FriendsService,
     private readonly usersService: UsersService,
+    private readonly friendsService: FriendsService,
+    private readonly friendRequestsService: FriendRequestsService,
   ) {}
 
   @Mutation('friendUnfriendAUser')
@@ -45,31 +48,46 @@ export class FriendsResolver {
           throw new UserAlreadyFriendError();
         }
 
-        if (follower && !follower.isFriend) {
-          await this.friendsService.update(
-            { isFriend },
-            {
-              userId: currentUser.id,
-              followingUserId: friendUnfriendInput.followingUserId,
-            },
-          );
-        } else {
-          const createFriendInput = {
-            userId: currentUser.id,
-            ...friendUnfriendInput,
-          };
+        const followerRequest = await this.friendRequestsService.findOne({
+          userId: currentUser.id,
+          followingUserId: friendUnfriendInput.followingUserId,
+          friendRequestStatus: FriendRequestStatus.PENDING,
+        });
 
-          await this.friendsService.create(createFriendInput);
+        if (followerRequest) {
+          throw new FriendRequestStatusError(
+            FriendRequestStatus.PENDING.toLowerCase(),
+          );
         }
 
-        return 'You become friend of each other';
+        if (!follower) {
+          await this.friendsService.create({
+            userId: currentUser.id,
+            followingUserId: friendUnfriendInput.followingUserId,
+          });
+        }
+
+        await this.friendRequestsService.create({
+          userId: currentUser.id,
+          followingUserId: friendUnfriendInput.followingUserId,
+        });
+
+        return 'Friend request sent';
       }
 
       if (follower && !follower.isFriend) {
         throw new UserAlreadyNotFriendError();
       }
 
-      return 'You removed your friend';
+      await this.friendsService.update(
+        { isFriend: false },
+        {
+          userId: currentUser.id,
+          followingUserId: friendUnfriendInput.followingUserId,
+        },
+      );
+
+      return 'Friend removed';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -85,26 +103,64 @@ export class FriendsResolver {
     @Args('status') status: FriendRequestStatus,
   ): Promise<string> {
     try {
-      const request = await this.friendsService.findOne({
+      const request = await this.friendRequestsService.findOne({
+        userId: friendUserId,
+        followingUserId: currentUser.id,
+      });
+
+      if (!request) {
+        throw new NoFriendRequestFoundError();
+      }
+
+      if (request.friendRequestStatus === FriendRequestStatus.PENDING) {
+        await this.friendRequestsService.update(
+          { friendRequestStatus: status },
+          { userId: friendUserId, followingUserId: currentUser.id },
+        );
+      }
+
+      if (status === FriendRequestStatus.ACCEPTED) {
+        await this.friendsService.update(
+          { isFriend: true },
+          { userId: friendUserId, followingUserId: currentUser.id },
+        );
+      }
+
+      await this.friendRequestsService.remove({
+        userId: friendUserId,
+        followingUserId: currentUser.id,
+      });
+
+      return `Friend request ${status.toLowerCase()}`;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('withdrawFriendRequest')
+  async withdrawFriendRequest(
+    @CurrentUser() currentUser: User,
+    @Args('friendUserId') friendUserId: string,
+  ): Promise<string> {
+    try {
+      const request = await this.friendRequestsService.findOne({
         userId: currentUser.id,
         followingUserId: friendUserId,
       });
 
-      if (
-        request.friendRequestStatus === FriendRequestStatus.ACCEPTED ||
-        request.friendRequestStatus === FriendRequestStatus.REJECTED
-      ) {
-        throw new FriendRequestStatusError(
-          request.friendRequestStatus.toLowerCase(),
-        );
+      if (!request) {
+        throw new NoFriendRequestFoundError();
       }
 
-      await this.friendsService.update(
-        { isFriend: true, friendRequestStatus: status },
-        { userId: currentUser.id, followingUserId: friendUserId },
-      );
+      await this.friendRequestsService.remove({
+        userId: currentUser.id,
+        followingUserId: friendUserId,
+      });
 
-      return `Friend request ${status.toLowerCase()}`;
+      return `Friend request withdrawn`;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
