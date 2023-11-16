@@ -9,10 +9,16 @@ import {
   DeletedAt,
 } from 'sequelize-typescript';
 
+export enum FriendRequestStatus {
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  PENDING = 'PENDING',
+}
+
 @Table({
   underscored: true,
 })
-export class Friend extends Model {
+export class FriendRequest extends Model {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
@@ -27,8 +33,8 @@ export class Friend extends Model {
   @Column({ allowNull: false })
   followingUserId: string;
 
-  @Column({ allowNull: false, defaultValue: false })
-  isFriend: boolean;
+  @Column({ allowNull: false, defaultValue: FriendRequestStatus.PENDING })
+  friendRequestStatus: FriendRequestStatus;
 
   @Column({ allowNull: false })
   @CreatedAt
