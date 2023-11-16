@@ -59,3 +59,15 @@ export class FriendRequestStatusError extends HttpException {
     );
   }
 }
+
+export class NoFriendRequestFoundError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'No friend request found',
+        code: 'NO_FRIEND_REQUEST_FOUND',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
