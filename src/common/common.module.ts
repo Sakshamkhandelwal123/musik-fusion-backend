@@ -5,6 +5,7 @@ import { SpotifyService } from './spotify/spotify.service';
 import { SendgridService } from './sendgrid/sendgrid.service';
 import { SpotifyController } from './spotify/spotify.controller';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { CentrifugoService } from './centrifugo/centrifugo.service';
 import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
 
 @Global()
@@ -15,6 +16,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
     SendgridService,
     CloudinaryConfiguration,
     CloudinaryService,
+    CentrifugoService,
   ],
   controllers: [SpotifyController],
   exports: [
@@ -23,6 +25,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
     SendgridService,
     CloudinaryConfiguration,
     CloudinaryService,
+    CentrifugoService,
   ],
 })
 export class CommonModule {}
