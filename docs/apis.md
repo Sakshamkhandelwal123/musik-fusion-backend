@@ -10,7 +10,8 @@
 | getUserByUsername |        :x:         | username      |
 | getUserFollowers  |        :x:         | username      |
 | getUserFollowing  |        :x:         | username      |
-| getUserFriends    |        :x:         | username      |
+| getUserFriends    | :white_check_mark: | username      |
+| getFriendRequests | :white_check_mark: |               |
 
 ### Mutation
 
