@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 
+import { Friend } from './entities/friend.entity';
 import { FriendsService } from './friends.service';
 import { Public } from 'src/auth/decorators/public';
 import { User } from 'src/users/entities/user.entity';
@@ -17,6 +18,9 @@ import {
   FriendRequestStatus,
 } from './entities/freind-request.entity';
 import {
+  CannotFollowYourselfError,
+  CannotFriendUnfriendYourselfError,
+  CannotUnfollowYourselfError,
   FriendRequestStatusError,
   NoFriendRequestFoundError,
   UserAlreadyFollowedError,
@@ -24,7 +28,6 @@ import {
   UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
-import { Friend } from './entities/friend.entity';
 
 @Resolver('Friend')
 export class FriendsResolver {
@@ -40,6 +43,10 @@ export class FriendsResolver {
     @Args('friendUnfriendInput') friendUnfriendInput: FriendUnfriendInput,
   ): Promise<string> {
     try {
+      if (currentUser.id === friendUnfriendInput.followingUserId) {
+        throw new CannotFriendUnfriendYourselfError();
+      }
+
       const { isFriend } = friendUnfriendInput;
 
       const follower = await this.friendsService.findOne({
@@ -179,6 +186,10 @@ export class FriendsResolver {
     @Args('followUserInput') followUserInput: FollowUserInput,
   ): Promise<string> {
     try {
+      if (currentUser.id === followUserInput.followingUserId) {
+        throw new CannotFollowYourselfError();
+      }
+
       const follower = await this.friendsService.findOne({
         userId: currentUser.id,
         followingUserId: followUserInput.followingUserId,
@@ -210,6 +221,10 @@ export class FriendsResolver {
     @Args('unFollowUserInput') unFollowUserInput: UnFollowUserInput,
   ): Promise<string> {
     try {
+      if (currentUser.id === unFollowUserInput.followingUserId) {
+        throw new CannotUnfollowYourselfError();
+      }
+
       const follower = await this.friendsService.findOne({
         userId: currentUser.id,
         followingUserId: unFollowUserInput.followingUserId,

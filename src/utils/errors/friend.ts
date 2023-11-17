@@ -71,3 +71,39 @@ export class NoFriendRequestFoundError extends HttpException {
     );
   }
 }
+
+export class CannotFollowYourselfError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You cannot follow yourself',
+        code: 'CANNOT_FOLLOW_YOURSELF',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class CannotUnfollowYourselfError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You cannot unfollow yourself',
+        code: 'CANNOT_UNFOLLOW_YOURSELF',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class CannotFriendUnfriendYourselfError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You cannot be a friend of yourself or unfriend yourself',
+        code: 'CANNOT_FRIEND_UNFRIEND_YOURSELF',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
