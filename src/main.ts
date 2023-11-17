@@ -49,10 +49,10 @@ async function bootstrap() {
   const serverAddress = response.address();
 
   console.log(
-    `⚡ Server is listening at http://${serverAddress.address}:${serverAddress.port}`,
+    `🎶 Server is listening 🎧 at http://${serverAddress.address}:${serverAddress.port}`,
   );
   console.log(
-    `⚡ Checkout Documentation at http://${serverAddress.address}:${serverAddress.port}/api-docs`,
+    `🎶 Checkout Documentation 🧾 at http://${serverAddress.address}:${serverAddress.port}/api-docs`,
   );
 }
 
