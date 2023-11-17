@@ -47,6 +47,14 @@ export class FriendsResolver {
         throw new CannotFriendUnfriendYourselfError();
       }
 
+      const friendUser = await this.usersService.findOne({
+        id: friendUnfriendInput.followingUserId,
+      });
+
+      if (!friendUser) {
+        throw new InvalidUserError();
+      }
+
       const { isFriend } = friendUnfriendInput;
 
       const follower = await this.friendsService.findOne({
@@ -190,6 +198,14 @@ export class FriendsResolver {
         throw new CannotFollowYourselfError();
       }
 
+      const followUser = await this.usersService.findOne({
+        id: followUserInput.followingUserId,
+      });
+
+      if (!followUser) {
+        throw new InvalidUserError();
+      }
+
       const follower = await this.friendsService.findOne({
         userId: currentUser.id,
         followingUserId: followUserInput.followingUserId,
@@ -223,6 +239,14 @@ export class FriendsResolver {
     try {
       if (currentUser.id === unFollowUserInput.followingUserId) {
         throw new CannotUnfollowYourselfError();
+      }
+
+      const unfollowUser = await this.usersService.findOne({
+        id: unFollowUserInput.followingUserId,
+      });
+
+      if (!unfollowUser) {
+        throw new InvalidUserError();
       }
 
       const follower = await this.friendsService.findOne({
