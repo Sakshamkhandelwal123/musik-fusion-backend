@@ -10,6 +10,8 @@
 | getUserByUsername |        :x:         | username      |
 | getUserFollowers  |        :x:         | username      |
 | getUserFollowing  |        :x:         | username      |
+| getUserFriends    | :white_check_mark: | username      |
+| getFriendRequests | :white_check_mark: |               |
 
 ### Mutation
 
@@ -24,8 +26,11 @@
 | resendVerificationEmail |        :x:         | email                                      |
 | updateUserProfile       | :white_check_mark: | username, firstName, lastName, phoneNumber |
 | deleteUserAccount       | :white_check_mark: | username                                   |
-| followUser              | :white_check_mark: | username                                   |
-| unfollowUser            | :white_check_mark: | username                                   |
+| followUser              | :white_check_mark: | followingUserId                            |
+| unFollowUser            | :white_check_mark: | followingUserId                            |
+| friendUnfriendAUser     | :white_check_mark: | followingUserId, isFriend                  |
+| handleFriendRequest     | :white_check_mark: | friendUserId, status                       |
+| withdrawFriendRequest   | :white_check_mark: | friendUserId                               |
 
 ## Rest Apis
 

@@ -105,7 +105,7 @@ export class UsersResolver {
 
   @Public()
   @Mutation('forgotPassword')
-  async forgotPassword(@Args('email') email: string) {
+  async forgotPassword(@Args('email') email: string): Promise<string> {
     try {
       const user = await this.usersService.findOne({ email });
 
@@ -137,7 +137,7 @@ export class UsersResolver {
   async verifyNewPassword(
     @Args('verifyNewPasswordInput')
     verifyNewPasswordInput: VerifyNewPasswordInput,
-  ) {
+  ): Promise<string> {
     try {
       const user = await this.usersService.findOne({
         email: verifyNewPasswordInput.email,
@@ -163,7 +163,7 @@ export class UsersResolver {
         { id: user.id },
       );
 
-      return 'Password Changed!!!';
+      return 'Password changed successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -173,7 +173,7 @@ export class UsersResolver {
   }
 
   @Mutation('resetPassword')
-  async resetPassword(@CurrentUser() currentUser: User) {
+  async resetPassword(@CurrentUser() currentUser: User): Promise<string> {
     try {
       const emailOtp = generateOtp();
 
@@ -198,7 +198,7 @@ export class UsersResolver {
   @Mutation('verifyEmail')
   async verifyEmail(
     @Args('verifyEmailInput') verifyEmailInput: VerifyEmailInput,
-  ) {
+  ): Promise<string> {
     try {
       const user = await this.usersService.findOne({
         email: verifyEmailInput.email,
@@ -221,7 +221,7 @@ export class UsersResolver {
         { id: user.id },
       );
 
-      return 'Email Verification Successful!!!';
+      return 'Email verification successful';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -232,7 +232,7 @@ export class UsersResolver {
 
   @Public()
   @Mutation('resendVerificationEmail')
-  async resendVerificationEmail(@Args('email') email: string) {
+  async resendVerificationEmail(@Args('email') email: string): Promise<string> {
     try {
       const user = await this.usersService.findOne({ email });
 
@@ -266,7 +266,7 @@ export class UsersResolver {
   async deleteUserAccount(
     @CurrentUser() currentUser: User,
     @Args('username') username: string,
-  ) {
+  ): Promise<string> {
     try {
       const user = await this.usersService.findOne({ id: currentUser.id });
 
@@ -276,7 +276,7 @@ export class UsersResolver {
 
       await this.usersService.remove({ id: currentUser.id });
 
-      return 'Account deleted successfully!!!';
+      return 'Account deleted successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -286,7 +286,7 @@ export class UsersResolver {
   }
 
   @Query('me')
-  async me(@CurrentUser() currentUser: User) {
+  async me(@CurrentUser() currentUser: User): Promise<User> {
     try {
       const user = await this.usersService.findOne({ id: currentUser.id });
 
@@ -305,7 +305,7 @@ export class UsersResolver {
 
   @Public()
   @Query('getUserByUsername')
-  async getUserByUsername(@Args('username') username: string) {
+  async getUserByUsername(@Args('username') username: string): Promise<User> {
     try {
       const user = await this.usersService.findOne({ username });
 

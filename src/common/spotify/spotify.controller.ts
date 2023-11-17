@@ -1,8 +1,10 @@
+import { ApiTags } from '@nestjs/swagger';
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 
 import { SpotifyService } from './spotify.service';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 
+@ApiTags('Spotify')
 @Controller('spotify')
 export class SpotifyController {
   constructor(private readonly spotifyService: SpotifyService) {}
