@@ -1,13 +1,23 @@
+import { WebSocket } from 'ws';
+import * as jwt from 'jsonwebtoken';
 import { Centrifuge } from 'centrifuge';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { applicationConfig } from 'config';
+import { UsersService } from 'src/users/users.service';
+import { getErrorCodeAndMessage } from 'src/utils/helpers';
 
 @Injectable()
 export class CentrifugoService {
-  constructor() {}
+  constructor(private readonly usersService: UsersService) {}
 
-  async connectToCentrifugo() {
+  async connectToCentrifugo(userId: string) {
     const centrifuge = new Centrifuge(
       'ws://localhost:8000/connection/websocket',
+      {
+        token: await this.generateUserToken({ id: userId }),
+        websocket: WebSocket,
+      },
     );
 
     centrifuge
@@ -23,5 +33,28 @@ export class CentrifugoService {
       .connect();
 
     return centrifuge;
+  }
+
+  async generateUserToken(payload: any) {
+    try {
+      const user = await this.usersService.findOne(payload);
+
+      if (!user) {
+        return null;
+      }
+
+      const token = jwt.sign(
+        { sub: user.id, info: { username: user.username } },
+        applicationConfig.centrifugo.hmacSecretKey,
+        { expiresIn: 5 * 60 * 60 },
+      );
+
+      return token;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
