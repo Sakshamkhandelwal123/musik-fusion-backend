@@ -1,7 +1,8 @@
 import toStream = require('buffer-to-stream');
 import { v2, UploadApiResponse } from 'cloudinary';
-import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
+import { getErrorCodeAndMessage } from 'src/utils/helpers';
 
 @Injectable()
 export class CloudinaryService {

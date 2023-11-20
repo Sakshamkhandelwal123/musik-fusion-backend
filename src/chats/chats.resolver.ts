@@ -1,17 +1,20 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
 import { ChatsService } from './chats.service';
-import { CreateChatInput } from './dto/create-chat.input';
-import { UpdateChatInput } from './dto/update-chat.input';
-import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
 import { Public } from 'src/auth/decorators/public';
+import { User } from 'src/users/entities/user.entity';
+import { CreateChatInput } from './dto/create-chat.input';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { FriendsService } from 'src/friends/friends.service';
+import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
 
 @Resolver('Chat')
 export class ChatsResolver {
   constructor(
     private readonly chatsService: ChatsService,
+    private readonly friendsService: FriendsService,
     private readonly centrifugoService: CentrifugoService,
   ) {}
 
@@ -23,13 +26,16 @@ export class ChatsResolver {
         '1844108a-8df4-4189-8168-c0a3f3d0959a',
       );
 
-      console.log(client);
+      await client.publish('#1844108a-8df4-4189-8168-c0a3f3d0959a', {
+        input: 'hi',
+      });
 
-      const sub = client.newSubscription('hello');
+      const mes = await client.history(
+        '#1844108a-8df4-4189-8168-c0a3f3d0959a',
+        { limit: 10 },
+      );
 
-      sub.subscribe();
-
-      await client.publish('hello', { input: 'hello' });
+      console.log(mes);
 
       return this.chatsService.create(createChatInput);
     } catch (error) {
@@ -40,23 +46,20 @@ export class ChatsResolver {
     }
   }
 
-  @Query('chats')
-  findAll() {
-    return this.chatsService.findAll();
-  }
+  @Query('getAllFriendsChannel')
+  async getAllFriendsChannel(@CurrentUser() currentUser: User) {
+    try {
+      const friend = await this.friendsService.findAll({
+        userId: currentUser.id,
+        isFriend: true,
+      });
 
-  @Query('chat')
-  findOne(@Args('id') id: number) {
-    return this.chatsService.findOne(id);
-  }
-
-  @Mutation('updateChat')
-  update(@Args('updateChatInput') updateChatInput: UpdateChatInput) {
-    return this.chatsService.update(updateChatInput.id, updateChatInput);
-  }
-
-  @Mutation('removeChat')
-  remove(@Args('id') id: number) {
-    return this.chatsService.remove(id);
+      return friend;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
