@@ -4,14 +4,16 @@
 
 ### Query
 
-| Name              |        Auth        | GraphQL Input |
-| :---------------- | :----------------: | :------------ |
-| me                | :white_check_mark: |               |
-| getUserByUsername |        :x:         | username      |
-| getUserFollowers  |        :x:         | username      |
-| getUserFollowing  |        :x:         | username      |
-| getUserFriends    | :white_check_mark: | username      |
-| getFriendRequests | :white_check_mark: |               |
+| Name                 |        Auth        | GraphQL Input |
+| :------------------- | :----------------: | :------------ |
+| me                   | :white_check_mark: |               |
+| getUserByUsername    |        :x:         | username      |
+| getUserFollowers     |        :x:         | username      |
+| getUserFollowing     |        :x:         | username      |
+| getUserFriends       | :white_check_mark: | username      |
+| getFriendRequests    | :white_check_mark: |               |
+| getAllChats          | :white_check_mark: | channelName   |
+| getAllFriendsChannel | :white_check_mark: |               |
 
 ### Mutation
 
@@ -31,6 +33,8 @@
 | friendUnfriendAUser     | :white_check_mark: | followingUserId, isFriend                  |
 | handleFriendRequest     | :white_check_mark: | friendUserId, status                       |
 | withdrawFriendRequest   | :white_check_mark: | friendUserId                               |
+| createChat              | :white_check_mark: | channelName, text                          |
+| deleteChat              | :white_check_mark: | chatId                                     |
 
 ## Rest Apis
 
