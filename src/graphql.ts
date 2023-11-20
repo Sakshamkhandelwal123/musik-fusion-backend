@@ -63,8 +63,7 @@ export interface Chat {
 }
 
 export interface IQuery {
-    chats(): Nullable<Chat>[] | Promise<Nullable<Chat>[]>;
-    chat(id: number): Nullable<Chat> | Promise<Nullable<Chat>>;
+    getAllFriendsChannel(): Friend | Promise<Friend>;
     getFriendRequests(): FriendRequestResponse | Promise<FriendRequestResponse>;
     getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
     getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;

@@ -13,8 +13,7 @@ input UpdateChatInput {
 }
 
 type Query {
-  chats: [Chat]!
-  chat(id: Int!): Chat
+  getAllFriendsChannel: Friend!
 }
 
 type Mutation {
