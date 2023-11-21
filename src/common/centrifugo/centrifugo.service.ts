@@ -57,4 +57,27 @@ export class CentrifugoService {
       );
     }
   }
+
+  // async generateChannelToken(payload: any) {
+  //   try {
+  //     const channel = await this..findOne(payload);
+
+  //     if (!channel) {
+  //       return null;
+  //     }
+
+  //     const token = jwt.sign(
+  //       { sub: channel.id, channel: channel.name },
+  //       applicationConfig.centrifugo.hmacSecretKey,
+  //       { expiresIn: 5 * 60 * 60 },
+  //     );
+
+  //     return token;
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       getErrorCodeAndMessage(error),
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  // }
 }
