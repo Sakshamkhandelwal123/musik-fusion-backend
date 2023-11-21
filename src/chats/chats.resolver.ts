@@ -20,22 +20,24 @@ export class ChatsResolver {
 
   @Public()
   @Mutation('createChat')
-  async create(@Args('createChatInput') createChatInput: CreateChatInput) {
+  async create(
+    @CurrentUser() currentUser: User,
+    @Args('createChatInput') createChatInput: CreateChatInput,
+  ) {
     try {
       const client = await this.centrifugoService.connectToCentrifugo(
-        '1844108a-8df4-4189-8168-c0a3f3d0959a',
+        currentUser.id,
       );
 
-      await client.publish('#1844108a-8df4-4189-8168-c0a3f3d0959a', {
+      // client.newSubscription(createChatInput.channelId, {
+      //   token: await this.centrifugoService.generateChannelToken({
+      //     id: createChatInput.channelId,
+      //   }),
+      // });
+
+      await client.publish(currentUser.id, {
         input: 'hi',
       });
-
-      const mes = await client.history(
-        '#1844108a-8df4-4189-8168-c0a3f3d0959a',
-        { limit: 10 },
-      );
-
-      console.log(mes);
 
       return this.chatsService.create(createChatInput);
     } catch (error) {
