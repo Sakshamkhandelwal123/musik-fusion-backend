@@ -2,21 +2,26 @@ import { Op } from 'sequelize';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
+import { Chat } from './entities/chat.entity';
 import { ChatsService } from './chats.service';
+import { Channel } from './entities/channel.entity';
 import { ChannelsService } from './channels.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { InvalidUserError } from 'src/utils/errors/user';
-import { CreateChatInput } from './dto/create-chat.input';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
+import { Friend } from 'src/friends/entities/friend.entity';
 import { FriendsService } from 'src/friends/friends.service';
+import { CreateMessageInput } from './dto/create-chat.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { ChannelMembersService } from './channel-members.service';
 import { UserAlreadyNotFriendError } from 'src/utils/errors/friend';
 import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
 import {
   ChannelNotFoundError,
+  SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
+  UserNotMemberOfChannelError,
 } from 'src/utils/errors/chat';
 
 @Resolver('Chat')
@@ -34,9 +39,13 @@ export class ChatsResolver {
   async joinChannel(
     @CurrentUser() currentUser: User,
     @Args('friendUserId') friendUserId: string,
-  ) {
+  ): Promise<Channel> {
     try {
       // for 1v1 chat only
+
+      if (currentUser.id === friendUserId) {
+        throw new SelfChannelNotAllowedError();
+      }
 
       const friend = await this.usersService.findOne({ id: friendUserId });
 
@@ -100,24 +109,46 @@ export class ChatsResolver {
   @Mutation('sendMessage')
   async sendMessage(
     @CurrentUser() currentUser: User,
-    @Args('createChatInput') createChatInput: CreateChatInput,
-  ) {
+    @Args('createMessageInput') createMessageInput: CreateMessageInput,
+  ): Promise<Chat> {
     try {
+      const channel = await this.channelsService.findOne({
+        id: createMessageInput.channelId,
+      });
+
+      if (!channel) {
+        throw new ChannelNotFoundError();
+      }
+
+      const member = await this.channelMembersService.findOne({
+        userId: currentUser.id,
+        channelId: createMessageInput.channelId,
+      });
+
+      if (!member) {
+        throw new UserNotMemberOfChannelError();
+      }
+
       const client = await this.centrifugoService.connectToCentrifugo(
         currentUser.id,
       );
 
-      client.newSubscription(createChatInput.channelId, {
-        token: await this.centrifugoService.generateChannelToken({
-          id: createChatInput.channelId,
-        }),
+      client
+        .newSubscription(channel.name, {
+          token: await this.centrifugoService.generateChannelToken({
+            id: channel.id,
+          }),
+        })
+        .subscribe();
+
+      await client.publish(channel.name, {
+        input: createMessageInput.message,
       });
 
-      await client.publish(currentUser.id, {
-        input: 'hi',
+      return this.chatsService.create({
+        userId: currentUser.id,
+        ...createMessageInput,
       });
-
-      return this.chatsService.create(createChatInput);
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -127,7 +158,9 @@ export class ChatsResolver {
   }
 
   @Query('getAllFriendsChannel')
-  async getAllFriendsChannel(@CurrentUser() currentUser: User) {
+  async getAllFriendsChannel(
+    @CurrentUser() currentUser: User,
+  ): Promise<Friend[]> {
     try {
       const friend = await this.friendsService.findAll({
         userId: currentUser.id,
