@@ -1,5 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 
+import { Chat } from './entities/chat.entity';
 import { ChatsService } from './chats.service';
 import { ChatsResolver } from './chats.resolver';
 import { Channel } from './entities/channel.entity';
@@ -12,7 +13,7 @@ import { ChannelMembersService } from './channel-members.service';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Channel, ChannelMember]),
+    SequelizeModule.forFeature([Chat, Channel, ChannelMember]),
     FriendsModule,
     forwardRef(() => UsersModule),
   ],
