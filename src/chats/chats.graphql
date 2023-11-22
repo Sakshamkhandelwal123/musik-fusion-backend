@@ -1,23 +1,34 @@
+scalar Date
+
 type Chat {
-  # Example field (placeholder)
-  exampleField: Int
+  id: String!
+  message: String!
+  isWatched: Boolean!
+  channelId: String!
+  userId: String!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
-input CreateChatInput {
+type Channel {
+  id: String!
+  name: String!
+  createdBy: String!
+  lastMessageTimestamp: Date
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+input CreateMessageInput {
   message: String!
   channelId: String!
 }
 
-input UpdateChatInput {
-  id: Int!
-}
-
 type Query {
-  getAllFriendsChannel: Friend!
+  getAllFriendsChannel: [Friend!]!
 }
 
 type Mutation {
-  joinChannel(friendUserId: String!): Chat!
-  sendMessage(createChatInput: CreateChatInput!): Chat!
-  removeChat(id: Int!): Chat
+  joinChannel(friendUserId: String!): Channel!
+  sendMessage(createMessageInput: CreateMessageInput!): Chat!
 }

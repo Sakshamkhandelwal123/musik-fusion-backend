@@ -14,13 +14,9 @@ export enum FriendRequestStatus {
     PENDING = "PENDING"
 }
 
-export interface CreateChatInput {
+export interface CreateMessageInput {
     message: string;
     channelId: string;
-}
-
-export interface UpdateChatInput {
-    id: number;
 }
 
 export interface FriendUnfriendInput {
@@ -60,11 +56,26 @@ export interface VerifyNewPasswordInput {
 }
 
 export interface Chat {
-    exampleField?: Nullable<number>;
+    id: string;
+    message: string;
+    isWatched: boolean;
+    channelId: string;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Channel {
+    id: string;
+    name: string;
+    createdBy: string;
+    lastMessageTimestamp?: Nullable<Date>;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface IQuery {
-    getAllFriendsChannel(): Friend | Promise<Friend>;
+    getAllFriendsChannel(): Friend[] | Promise<Friend[]>;
     getFriendRequests(): FriendRequestResponse | Promise<FriendRequestResponse>;
     getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
     getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
@@ -74,9 +85,8 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    joinChannel(friendUserId: string): Chat | Promise<Chat>;
-    sendMessage(createChatInput: CreateChatInput): Chat | Promise<Chat>;
-    removeChat(id: number): Nullable<Chat> | Promise<Nullable<Chat>>;
+    joinChannel(friendUserId: string): Channel | Promise<Channel>;
+    sendMessage(createMessageInput: CreateMessageInput): Chat | Promise<Chat>;
     withdrawFriendRequest(friendUserId: string): string | Promise<string>;
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
