@@ -33,8 +33,8 @@
 | friendUnfriendAUser     | :white_check_mark: | followingUserId, isFriend                  |
 | handleFriendRequest     | :white_check_mark: | friendUserId, status                       |
 | withdrawFriendRequest   | :white_check_mark: | friendUserId                               |
-| createChat              | :white_check_mark: | channelName, text                          |
-| deleteChat              | :white_check_mark: | chatId                                     |
+| sendMessage             | :white_check_mark: | channelId, message                         |
+| joinChannel             | :white_check_mark: | friendUserId                               |
 
 ## Rest Apis
 
