@@ -6,10 +6,14 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { applicationConfig } from 'config';
 import { UsersService } from 'src/users/users.service';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
+import { ChannelsService } from 'src/chats/channels.service';
 
 @Injectable()
 export class CentrifugoService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly channelsService: ChannelsService,
+  ) {}
 
   async connectToCentrifugo(userId: string) {
     const centrifuge = new Centrifuge(
@@ -58,26 +62,26 @@ export class CentrifugoService {
     }
   }
 
-  // async generateChannelToken(payload: any) {
-  //   try {
-  //     const channel = await this..findOne(payload);
+  async generateChannelToken(payload: any) {
+    try {
+      const channel = await this.channelsService.findOne(payload);
 
-  //     if (!channel) {
-  //       return null;
-  //     }
+      if (!channel) {
+        return null;
+      }
 
-  //     const token = jwt.sign(
-  //       { sub: channel.id, channel: channel.name },
-  //       applicationConfig.centrifugo.hmacSecretKey,
-  //       { expiresIn: 5 * 60 * 60 },
-  //     );
+      const token = jwt.sign(
+        { sub: channel.id, info: { channel: channel.name } },
+        applicationConfig.centrifugo.hmacSecretKey,
+        { expiresIn: 5 * 60 * 60 },
+      );
 
-  //     return token;
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       getErrorCodeAndMessage(error),
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-  // }
+      return token;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }
