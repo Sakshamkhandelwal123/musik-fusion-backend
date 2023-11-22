@@ -4,8 +4,8 @@ type Chat {
 }
 
 input CreateChatInput {
-  # Example field (placeholder)
-  exampleField: Int
+  message: String!
+  channelId: String!
 }
 
 input UpdateChatInput {
@@ -17,7 +17,7 @@ type Query {
 }
 
 type Mutation {
-  createChat(createChatInput: CreateChatInput!): Chat!
-  updateChat(updateChatInput: UpdateChatInput!): Chat!
+  joinChannel(friendUserId: String!): Chat!
+  sendMessage(createChatInput: CreateChatInput!): Chat!
   removeChat(id: Int!): Chat
 }

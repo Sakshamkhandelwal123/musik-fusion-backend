@@ -15,7 +15,8 @@ export enum FriendRequestStatus {
 }
 
 export interface CreateChatInput {
-    exampleField?: Nullable<number>;
+    message: string;
+    channelId: string;
 }
 
 export interface UpdateChatInput {
@@ -73,8 +74,8 @@ export interface IQuery {
 }
 
 export interface IMutation {
-    createChat(createChatInput: CreateChatInput): Chat | Promise<Chat>;
-    updateChat(updateChatInput: UpdateChatInput): Chat | Promise<Chat>;
+    joinChannel(friendUserId: string): Chat | Promise<Chat>;
+    sendMessage(createChatInput: CreateChatInput): Chat | Promise<Chat>;
     removeChat(id: number): Nullable<Chat> | Promise<Nullable<Chat>>;
     withdrawFriendRequest(friendUserId: string): string | Promise<string>;
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
