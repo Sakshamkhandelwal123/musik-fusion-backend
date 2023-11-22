@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { Friend } from './entities/friend.entity';
 import { FriendsService } from './friends.service';
@@ -9,7 +9,10 @@ import { FriendRequest } from './entities/freind-request.entity';
 import { FriendRequestsService } from './friend-requests.service';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Friend, FriendRequest]), UsersModule],
+  imports: [
+    SequelizeModule.forFeature([Friend, FriendRequest]),
+    forwardRef(() => UsersModule),
+  ],
   providers: [FriendsResolver, FriendsService, FriendRequestsService],
   exports: [FriendsService, FriendRequestsService],
 })

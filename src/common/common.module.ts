@@ -1,6 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 
 import { UsersModule } from 'src/users/users.module';
+import { ChatsModule } from 'src/chats/chats.module';
 import { DateScalar } from './scalar/date-scaler.service';
 import { SpotifyService } from './spotify/spotify.service';
 import { SendgridService } from './sendgrid/sendgrid.service';
@@ -11,7 +12,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
 
 @Global()
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, ChatsModule],
   providers: [
     SpotifyService,
     DateScalar,
