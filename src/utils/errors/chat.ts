@@ -23,3 +23,27 @@ export class UserAlreadyMemberOfChannelError extends HttpException {
     );
   }
 }
+
+export class UserNotMemberOfChannelError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You are not a member of this channel',
+        code: 'USER_NOT_MEMBER_OF_CHANNEL',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class SelfChannelNotAllowedError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You can not make or join personal channel',
+        code: 'SELF_CHANNEL_NOT_ALLOWED',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
