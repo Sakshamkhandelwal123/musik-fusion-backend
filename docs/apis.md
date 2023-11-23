@@ -4,16 +4,17 @@
 
 ### Query
 
-| Name                 |        Auth        | GraphQL Input |
-| :------------------- | :----------------: | :------------ |
-| me                   | :white_check_mark: |               |
-| getUserByUsername    |        :x:         | username      |
-| getUserFollowers     |        :x:         | username      |
-| getUserFollowing     |        :x:         | username      |
-| getUserFriends       | :white_check_mark: | username      |
-| getFriendRequests    | :white_check_mark: |               |
-| getAllChats          | :white_check_mark: | channelName   |
-| getAllFriendsChannel | :white_check_mark: |               |
+| Name                    |        Auth        | GraphQL Input     |
+| :---------------------- | :----------------: | :---------------- |
+| me                      | :white_check_mark: |                   |
+| getUserByUsername       |        :x:         | username          |
+| getUserFollowers        |        :x:         | username          |
+| getUserFollowing        |        :x:         | username          |
+| getUserFriends          | :white_check_mark: | username          |
+| getFriendRequests       | :white_check_mark: |                   |
+| getAllChats             | :white_check_mark: | channelName       |
+| getMySubscribedChannels | :white_check_mark: |                   |
+| getAllChatsByChannel    | :white_check_mark: | channelId, filter |
 
 ### Mutation
 
