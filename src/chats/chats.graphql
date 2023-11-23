@@ -19,13 +19,26 @@ type Channel {
   updatedAt: Date!
 }
 
+type ChatPaginatedResponse {
+  total: Int!
+  limit: Int!
+  offset: Int!
+  chats: [Chat!]!
+}
+
 input CreateMessageInput {
   message: String!
   channelId: String!
 }
 
+input Filter {
+  limit: Int!
+  offset: Int!
+}
+
 type Query {
-  getAllFriendsChannel: [Friend!]!
+  getMySubscribedChannels: [Channel!]!
+  getAllChatsByChannel(channelId: String!, filter: Filter): ChatPaginatedResponse!
 }
 
 type Mutation {

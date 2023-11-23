@@ -19,6 +19,11 @@ export interface CreateMessageInput {
     channelId: string;
 }
 
+export interface Filter {
+    limit: number;
+    offset: number;
+}
+
 export interface FriendUnfriendInput {
     followingUserId: string;
     isFriend: boolean;
@@ -74,8 +79,16 @@ export interface Channel {
     updatedAt: Date;
 }
 
+export interface ChatPaginatedResponse {
+    total: number;
+    limit: number;
+    offset: number;
+    chats: Chat[];
+}
+
 export interface IQuery {
-    getAllFriendsChannel(): Friend[] | Promise<Friend[]>;
+    getMySubscribedChannels(): Channel[] | Promise<Channel[]>;
+    getAllChatsByChannel(channelId: string, filter?: Nullable<Filter>): ChatPaginatedResponse | Promise<ChatPaginatedResponse>;
     getFriendRequests(): FriendRequestResponse | Promise<FriendRequestResponse>;
     getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
     getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
