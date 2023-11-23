@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
 import { Chat } from './entities/chat.entity';
+import { paginationQuery } from 'src/utils/pagination';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
-import { paginationQuery } from 'src/utils/pagination';
 
 @Injectable()
 export class ChatsService {

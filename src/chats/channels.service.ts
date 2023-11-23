@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
 import { Channel } from './entities/channel.entity';
-import { UpdateChatInput } from './dto/update-chat.input';
+import { UpdateChannelInput } from './dto/update-channel.input';
 import { CreateChannelInput } from './dto/create-channel.input';
 import { ChannelMembersService } from './channel-members.service';
 
@@ -37,8 +37,12 @@ export class ChannelsService {
     });
   }
 
-  update(id: number, updateChatInput: UpdateChatInput) {
-    return `This action updates a #${id} chat`;
+  async update(payload: UpdateChannelInput, condition = {}, options = {}) {
+    return this.channelModel.update(payload, {
+      where: condition,
+      ...options,
+      returning: true,
+    });
   }
 
   remove(id: number) {
