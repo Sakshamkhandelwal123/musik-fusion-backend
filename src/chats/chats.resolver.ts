@@ -1,7 +1,9 @@
+import { get } from 'lodash';
 import { Op } from 'sequelize';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
+import { PaginationFilter } from 'src/types';
 import { Chat } from './entities/chat.entity';
 import { ChatsService } from './chats.service';
 import { Channel } from './entities/channel.entity';
@@ -10,7 +12,6 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { InvalidUserError } from 'src/utils/errors/user';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
-import { Friend } from 'src/friends/entities/friend.entity';
 import { FriendsService } from 'src/friends/friends.service';
 import { CreateMessageInput } from './dto/create-chat.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
@@ -157,17 +158,72 @@ export class ChatsResolver {
     }
   }
 
-  @Query('getAllFriendsChannel')
-  async getAllFriendsChannel(
+  @Query('getMySubscribedChannels')
+  async getMySubscribedChannels(
     @CurrentUser() currentUser: User,
-  ): Promise<Friend[]> {
+  ): Promise<Channel[]> {
     try {
-      const friend = await this.friendsService.findAll({
+      const channelMembers = await this.channelMembersService.findAll({
         userId: currentUser.id,
-        isFriend: true,
       });
 
-      return friend;
+      const channels = await Promise.all(
+        channelMembers.map(async (member) => {
+          return await this.channelsService.findOne({ id: member.channelId });
+        }),
+      );
+
+      return channels;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Query('getAllChatsByChannel')
+  async getAllChatsByChannel(
+    @CurrentUser() currentUser: User,
+    @Args('channelId') channelId: string,
+    @Args('filter') filter: PaginationFilter,
+  ): Promise<{
+    total: number;
+    limit: number;
+    offset: number;
+    chats: Chat[];
+  }> {
+    try {
+      const offset = get(filter, 'offset');
+      const limit = get(filter, 'limit');
+
+      const channel = await this.channelsService.findOne({ id: channelId });
+
+      if (!channel) {
+        throw new ChannelNotFoundError();
+      }
+
+      const member = await this.channelMembersService.findOne({
+        userId: currentUser.id,
+        channelId,
+      });
+
+      if (!member) {
+        throw new UserNotMemberOfChannelError();
+      }
+
+      const chats = await this.chatsService.findAllPaginated(
+        { channelId },
+        limit,
+        offset,
+      );
+
+      return {
+        total: chats.total,
+        limit: chats.limit,
+        offset: chats.offset,
+        chats: chats.data,
+      };
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
