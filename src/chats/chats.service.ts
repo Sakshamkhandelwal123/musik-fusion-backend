@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Chat } from './entities/chat.entity';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
+import { paginationQuery } from 'src/utils/pagination';
 
 @Injectable()
 export class ChatsService {
@@ -16,8 +17,21 @@ export class ChatsService {
     return this.chatModel.create({ ...createChatInput });
   }
 
-  findAll() {
-    return `This action returns all chats`;
+  findAll(condition = {}, options = {}) {
+    return this.chatModel.findAll({
+      where: condition,
+      ...options,
+    });
+  }
+
+  findAllPaginated(condition = {}, limit?: number, offset?: number) {
+    const query = {
+      where: condition,
+    };
+
+    return paginationQuery(this.chatModel, offset, limit, query, [
+      ['createdAt', 'DESC'],
+    ]);
   }
 
   findOne(condition = {}, options = {}) {

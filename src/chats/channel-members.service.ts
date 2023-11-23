@@ -16,8 +16,11 @@ export class ChannelMembersService {
     return this.channelMemberModel.create({ ...createChannelMemberInput });
   }
 
-  findAll() {
-    return `This action returns all chats`;
+  findAll(condition = {}, options = {}) {
+    return this.channelMemberModel.findAll({
+      where: condition,
+      ...options,
+    });
   }
 
   findOne(condition = {}, options = {}) {
