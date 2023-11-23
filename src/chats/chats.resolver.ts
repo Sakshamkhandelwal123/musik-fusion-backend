@@ -146,10 +146,19 @@ export class ChatsResolver {
         input: createMessageInput.message,
       });
 
-      return this.chatsService.create({
+      const chat = await this.chatsService.create({
         userId: currentUser.id,
         ...createMessageInput,
       });
+
+      await this.channelsService.update(
+        {
+          lastMessageTimestamp: chat.createdAt,
+        },
+        { id: channel.id },
+      );
+
+      return chat;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
