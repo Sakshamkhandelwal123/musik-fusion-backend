@@ -59,3 +59,15 @@ export class MessageNotFoundError extends HttpException {
     );
   }
 }
+
+export class CannotDeleteOthersChatError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'You cannot delete others chat',
+        code: 'CANNOT_DELETE_OTHERS_CHAT',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
