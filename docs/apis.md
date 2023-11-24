@@ -39,7 +39,7 @@
 
 ## Rest Apis
 
-| Name                                      | Type |        Auth        | Body Input     | Query Params |
-| :---------------------------------------- | :--: | :----------------: | :------------- | :----------- |
-| /spotify/get-spotify-authentication-token | GET  |        :x:         |                |              |
-| /image/upload                             | POST | :white_check_mark: | username, type | image        |
+| Name                                      | Type |        Auth        | Body Input | Query Params |
+| :---------------------------------------- | :--: | :----------------: | :--------- | :----------- |
+| /spotify/get-spotify-authentication-token | GET  |        :x:         |            |              |
+| /upload-image                             | POST | :white_check_mark: |            | image        |
