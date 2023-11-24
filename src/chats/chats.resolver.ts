@@ -87,11 +87,13 @@ export class ChatsResolver {
         currentUser.id,
       );
 
-      client.newSubscription(channel.name, {
-        token: await this.centrifugoService.generateChannelToken({
-          id: channel.id,
-        }),
-      });
+      client
+        .newSubscription(channel.name, {
+          token: await this.centrifugoService.generateChannelToken({
+            id: channel.id,
+          }),
+        })
+        .subscribe();
 
       await this.channelMembersService.create({
         userId: currentUser.id,
@@ -220,6 +222,18 @@ export class ChatsResolver {
       if (!member) {
         throw new UserNotMemberOfChannelError();
       }
+
+      const client = await this.centrifugoService.connectToCentrifugo(
+        currentUser.id,
+      );
+
+      client
+        .newSubscription(channel.name, {
+          token: await this.centrifugoService.generateChannelToken({
+            id: channel.id,
+          }),
+        })
+        .subscribe();
 
       const chats = await this.chatsService.findAllPaginated(
         { channelId },
