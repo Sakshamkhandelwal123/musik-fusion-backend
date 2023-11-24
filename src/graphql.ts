@@ -71,8 +71,8 @@ export interface Chat {
     id: string;
     message: string;
     isWatched: boolean;
-    channelId: string;
-    userId: string;
+    channel: Channel;
+    user: User;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -80,7 +80,7 @@ export interface Chat {
 export interface Channel {
     id: string;
     name: string;
-    createdBy: string;
+    createdBy: User;
     lastMessageTimestamp?: Nullable<Date>;
     createdAt: Date;
     updatedAt: Date;
@@ -125,8 +125,8 @@ export interface IMutation {
 
 export interface Friend {
     id: string;
-    userId: string;
-    followingUserId: string;
+    user: User;
+    followingUser: User;
     isFriend: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -134,8 +134,8 @@ export interface Friend {
 
 export interface FriendRequest {
     id: string;
-    userId: string;
-    followingUserId: string;
+    user: User;
+    followingUser: User;
     friendRequestStatus: FriendRequestStatus;
     createdAt: Date;
     updatedAt: Date;
