@@ -4,7 +4,6 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Chat } from './entities/chat.entity';
 import { paginationQuery } from 'src/utils/pagination';
 import { CreateChatInput } from './dto/create-chat.input';
-import { UpdateChatInput } from './dto/update-chat.input';
 
 @Injectable()
 export class ChatsService {
@@ -41,11 +40,9 @@ export class ChatsService {
     });
   }
 
-  update(id: number, updateChatInput: UpdateChatInput) {
-    return `This action updates a #${id} chat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  remove(condition = {}) {
+    return this.chatModel.destroy({
+      where: condition,
+    });
   }
 }

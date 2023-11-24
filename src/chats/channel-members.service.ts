@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { UpdateChatInput } from './dto/update-chat.input';
 import { ChannelMember } from './entities/channel-member.entity';
 import { CreateChannelMemberInput } from './dto/create-channel-member.input';
 
@@ -28,13 +27,5 @@ export class ChannelMembersService {
       where: condition,
       ...options,
     });
-  }
-
-  update(id: number, updateChatInput: UpdateChatInput) {
-    return `This action updates a #${id} chat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
   }
 }

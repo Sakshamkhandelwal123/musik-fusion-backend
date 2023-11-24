@@ -28,6 +28,7 @@ import { UserAlreadyNotFriendError } from 'src/utils/errors/friend';
 import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
 import {
   ChannelNotFoundError,
+  MessageNotFoundError,
   SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
   UserNotMemberOfChannelError,
@@ -169,6 +170,32 @@ export class ChatsResolver {
       );
 
       return chat;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('deleteChat')
+  async deleteChat(
+    @CurrentUser() currentUser: User,
+    @Args('chatId') chatId: string,
+  ): Promise<string> {
+    try {
+      const chat = await this.chatsService.findOne({
+        id: chatId,
+        userId: currentUser.id,
+      });
+
+      if (!chat) {
+        throw new MessageNotFoundError();
+      }
+
+      await this.chatsService.remove({ id: chatId });
+
+      return 'Message deleted successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
