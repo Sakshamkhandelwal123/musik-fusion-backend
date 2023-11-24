@@ -27,6 +27,9 @@ export class User extends Model {
   @Column({ allowNull: false })
   lastName: string;
 
+  @Column({ allowNull: true })
+  profileImage: string;
+
   @Column({ allowNull: false })
   email: string;
 
