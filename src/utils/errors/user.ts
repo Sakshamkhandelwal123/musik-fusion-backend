@@ -60,6 +60,30 @@ export class UserAlreadyExistError extends HttpException {
   }
 }
 
+export class UserDetailsCannotBeEmptyError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'User details cannot contain empty fields',
+        code: 'USER_DETAILS_CANNOT_BE_EMPTY',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class UsernameAlreadyExistsError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Username is already taken',
+        code: 'USERNAME_ALREADY_EXISTS',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
 export class PhoneNumberInvalidError extends HttpException {
   constructor() {
     super(
