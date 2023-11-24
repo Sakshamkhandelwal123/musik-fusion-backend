@@ -417,6 +417,7 @@ export class UsersResolver {
     }
   }
 
+  @Public()
   @ResolveField()
   async profileImage(@Parent() parent: User): Promise<string> {
     try {
