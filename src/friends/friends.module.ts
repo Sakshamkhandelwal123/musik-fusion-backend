@@ -7,13 +7,19 @@ import { FriendsResolver } from './friends.resolver';
 import { UsersModule } from 'src/users/users.module';
 import { FriendRequest } from './entities/freind-request.entity';
 import { FriendRequestsService } from './friend-requests.service';
+import { FriendRequestsResolver } from './friend-requests.resolver';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Friend, FriendRequest]),
     forwardRef(() => UsersModule),
   ],
-  providers: [FriendsResolver, FriendsService, FriendRequestsService],
+  providers: [
+    FriendsResolver,
+    FriendRequestsResolver,
+    FriendsService,
+    FriendRequestsService,
+  ],
   exports: [FriendsService, FriendRequestsService],
 })
 export class FriendsModule {}
