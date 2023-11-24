@@ -28,4 +28,10 @@ export class ChannelMembersService {
       ...options,
     });
   }
+
+  remove(condition = {}) {
+    return this.channelMemberModel.destroy({
+      where: condition,
+    });
+  }
 }

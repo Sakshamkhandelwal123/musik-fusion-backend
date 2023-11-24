@@ -5,6 +5,10 @@ import { Channel } from './entities/channel.entity';
 import { UpdateChannelInput } from './dto/update-channel.input';
 import { CreateChannelInput } from './dto/create-channel.input';
 import { ChannelMembersService } from './channel-members.service';
+import {
+  ChannelNotFoundError,
+  UserNotMemberOfChannelError,
+} from 'src/utils/errors/chat';
 
 @Injectable()
 export class ChannelsService {
@@ -26,10 +30,6 @@ export class ChannelsService {
     return channel;
   }
 
-  findAll() {
-    return `This action returns all chats`;
-  }
-
   findOne(condition = {}, options = {}) {
     return this.channelModel.findOne({
       where: condition,
@@ -45,7 +45,24 @@ export class ChannelsService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  async isChannelMember(channelId: string, userId: string) {
+    const channel = await this.findOne({
+      id: channelId,
+    });
+
+    if (!channel) {
+      throw new ChannelNotFoundError();
+    }
+
+    const member = await this.channelMembersService.findOne({
+      userId,
+      channelId,
+    });
+
+    if (!member) {
+      throw new UserNotMemberOfChannelError();
+    }
+
+    return { channel, member };
   }
 }
