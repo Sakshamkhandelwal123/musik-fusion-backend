@@ -2,8 +2,8 @@ scalar Date
 
 type Friend {
   id: String!
-  userId: String!
-  followingUserId: String!
+  user: User!
+  followingUser: User!
   isFriend: Boolean!
   createdAt: Date!
   updatedAt: Date!
@@ -11,8 +11,8 @@ type Friend {
 
 type FriendRequest {
   id: String!
-  userId: String!
-  followingUserId: String!
+  user: User!
+  followingUser: User!
   friendRequestStatus: FriendRequestStatus!
   createdAt: Date!
   updatedAt: Date!

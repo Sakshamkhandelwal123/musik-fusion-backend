@@ -28,4 +28,8 @@ export class UpdateUserInput {
   @IsOptional()
   @IsString()
   username?: string;
+
+  @IsOptional()
+  @IsString()
+  profileImage?: string;
 }

@@ -1,5 +1,12 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import {
+  Resolver,
+  Mutation,
+  Args,
+  Query,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 
 import { Friend } from './entities/friend.entity';
 import { FriendsService } from './friends.service';
@@ -359,6 +366,32 @@ export class FriendsResolver {
       });
 
       return { total: count, requests: rows };
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @ResolveField()
+  async user(@Parent() parent: Friend) {
+    try {
+      return this.usersService.findOne({ id: parent.userId });
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @ResolveField()
+  async followingUser(@Parent() parent: Friend) {
+    try {
+      return this.usersService.findOne({ id: parent.followingUserId });
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

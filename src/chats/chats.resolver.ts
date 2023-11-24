@@ -1,12 +1,20 @@
 import { get } from 'lodash';
 import { Op } from 'sequelize';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 
 import { PaginationFilter } from 'src/types';
 import { Chat } from './entities/chat.entity';
 import { ChatsService } from './chats.service';
 import { Channel } from './entities/channel.entity';
+import { Public } from 'src/auth/decorators/public';
 import { ChannelsService } from './channels.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -247,6 +255,32 @@ export class ChatsResolver {
         offset: chats.offset,
         chats: chats.data,
       };
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @ResolveField()
+  async user(@Parent() parent: Chat) {
+    try {
+      return this.usersService.findOne({ id: parent.userId });
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @ResolveField()
+  async channel(@Parent() parent: Chat) {
+    try {
+      return this.channelsService.findOne({ id: parent.channelId });
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

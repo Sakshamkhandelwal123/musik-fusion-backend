@@ -1,6 +1,13 @@
 import { compare, genSalt, hash } from 'bcryptjs';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import {
+  Resolver,
+  Mutation,
+  Args,
+  Query,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -8,20 +15,31 @@ import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
 import { generateOtp } from 'src/utils/otp-generator';
-import { getErrorCodeAndMessage } from 'src/utils/helpers';
+import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyEmailInput } from './dto/verify-email.input';
 import { ChannelsService } from 'src/chats/channels.service';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { WrongInputValueError } from 'src/utils/errors/common';
-import { validatePasswordStrength } from 'src/utils/validation-checks';
 import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 import { VerifyNewPasswordInput } from './dto/verify-new-password.input';
+import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
+import {
+  validatePasswordStrength,
+  validatePhoneNumber,
+} from 'src/utils/validation-checks';
+import {
+  getErrorCodeAndMessage,
+  isNilOrEmpty,
+  isPresent,
+} from 'src/utils/helpers';
 import {
   EmailAlreadyVerifiedError,
   EmailNotVerifiedError,
   InvalidOTPError,
   InvalidUserError,
   UserAlreadyExistError,
+  UserDetailsCannotBeEmptyError,
+  UsernameAlreadyExistsError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
 
@@ -31,6 +49,7 @@ export class UsersResolver {
     private readonly usersService: UsersService,
     private readonly sendgridService: SendgridService,
     private readonly channelsService: ChannelsService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   @Public()
@@ -275,6 +294,65 @@ export class UsersResolver {
     }
   }
 
+  @Mutation('updateUserProfile')
+  async updateUserProfile(
+    @CurrentUser() currentUser: User,
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+  ) {
+    try {
+      if (
+        isNilOrEmpty(updateUserInput.firstName) &&
+        isNilOrEmpty(updateUserInput.lastName) &&
+        isNilOrEmpty(updateUserInput.username) &&
+        isNilOrEmpty(updateUserInput.phoneNumber)
+      ) {
+        throw new UserDetailsCannotBeEmptyError();
+      }
+
+      const updateUserPayload: {
+        firstName?: string;
+        lastName?: string;
+        username?: string;
+        phoneNumber?: string;
+      } = {};
+
+      if (isPresent(updateUserInput.firstName)) {
+        updateUserPayload.firstName = updateUserInput.firstName;
+      }
+
+      if (isPresent(updateUserInput.lastName)) {
+        updateUserPayload.lastName = updateUserInput.lastName;
+      }
+
+      if (isPresent(updateUserInput.phoneNumber)) {
+        const number = validatePhoneNumber(updateUserInput.phoneNumber);
+
+        updateUserPayload.phoneNumber = number;
+      }
+
+      if (isPresent(updateUserInput.username)) {
+        const user = await this.usersService.findOne({
+          username: updateUserInput.username,
+        });
+
+        if (user && currentUser.id !== user.id) {
+          throw new UsernameAlreadyExistsError();
+        }
+
+        updateUserPayload.username = updateUserInput.username;
+      }
+
+      await this.usersService.update(updateUserPayload, { id: currentUser.id });
+
+      return 'User profile updated successfully';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   @Mutation('deleteUserAccount')
   async deleteUserAccount(
     @CurrentUser() currentUser: User,
@@ -288,6 +366,10 @@ export class UsersResolver {
       }
 
       await this.usersService.remove({ id: currentUser.id });
+
+      if (isPresent(user.profileImage)) {
+        await this.cloudinaryService.deleteImage(user.profileImage);
+      }
 
       return 'Account deleted successfully';
     } catch (error) {
@@ -327,6 +409,23 @@ export class UsersResolver {
       }
 
       return user;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @ResolveField()
+  async profileImage(@Parent() parent: User): Promise<string> {
+    try {
+      if (isPresent(parent.profileImage)) {
+        return this.cloudinaryService.getImageUrl(parent.profileImage);
+      }
+
+      return null;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

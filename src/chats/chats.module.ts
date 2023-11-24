@@ -7,6 +7,7 @@ import { Channel } from './entities/channel.entity';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from 'src/users/users.module';
 import { ChannelsService } from './channels.service';
+import { ChannelsResolver } from './channels.resolver';
 import { FriendsModule } from 'src/friends/friends.module';
 import { ChannelMember } from './entities/channel-member.entity';
 import { ChannelMembersService } from './channel-members.service';
@@ -19,6 +20,7 @@ import { ChannelMembersService } from './channel-members.service';
   ],
   providers: [
     ChatsResolver,
+    ChannelsResolver,
     ChatsService,
     ChannelsService,
     ChannelMembersService,

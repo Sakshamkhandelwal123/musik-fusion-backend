@@ -4,8 +4,8 @@ type Chat {
   id: String!
   message: String!
   isWatched: Boolean!
-  channelId: String!
-  userId: String!
+  channel: Channel!
+  user: User!
   createdAt: Date!
   updatedAt: Date!
 }
@@ -13,7 +13,7 @@ type Chat {
 type Channel {
   id: String!
   name: String!
-  createdBy: String!
+  createdBy: User!
   lastMessageTimestamp: Date
   createdAt: Date!
   updatedAt: Date!
