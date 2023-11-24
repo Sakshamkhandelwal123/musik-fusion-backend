@@ -20,10 +20,13 @@ import { VerifyEmailInput } from './dto/verify-email.input';
 import { ChannelsService } from 'src/chats/channels.service';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { WrongInputValueError } from 'src/utils/errors/common';
-import { validatePasswordStrength } from 'src/utils/validation-checks';
 import { SendgridService } from 'src/common/sendgrid/sendgrid.service';
 import { VerifyNewPasswordInput } from './dto/verify-new-password.input';
 import { CloudinaryService } from 'src/common/cloudinary/cloudinary.service';
+import {
+  validatePasswordStrength,
+  validatePhoneNumber,
+} from 'src/utils/validation-checks';
 import {
   getErrorCodeAndMessage,
   isNilOrEmpty,
@@ -322,7 +325,9 @@ export class UsersResolver {
       }
 
       if (isPresent(updateUserInput.phoneNumber)) {
-        updateUserPayload.phoneNumber = updateUserInput.phoneNumber;
+        const number = validatePhoneNumber(updateUserInput.phoneNumber);
+
+        updateUserPayload.phoneNumber = number;
       }
 
       if (isPresent(updateUserInput.username)) {
@@ -361,6 +366,10 @@ export class UsersResolver {
       }
 
       await this.usersService.remove({ id: currentUser.id });
+
+      if (isPresent(user.profileImage)) {
+        await this.cloudinaryService.deleteImage(user.profileImage);
+      }
 
       return 'Account deleted successfully';
     } catch (error) {
