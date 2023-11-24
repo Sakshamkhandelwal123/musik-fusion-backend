@@ -41,7 +41,7 @@ export class CloudinaryService {
     try {
       const result = await v2.api.resource(publicId);
 
-      return result.url;
+      return result.secure_url;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

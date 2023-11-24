@@ -61,7 +61,7 @@ export class UserController {
         { id: currentUser.id },
       );
 
-      return uploadedImage.url;
+      return uploadedImage.secure_url;
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
