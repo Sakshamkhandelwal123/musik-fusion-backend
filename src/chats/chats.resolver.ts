@@ -32,7 +32,6 @@ import {
   MessageNotFoundError,
   SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
-  UserNotMemberOfChannelError,
 } from 'src/utils/errors/chat';
 
 @Resolver('Chat')
@@ -125,22 +124,10 @@ export class ChatsResolver {
     @Args('createMessageInput') createMessageInput: CreateMessageInput,
   ): Promise<Chat> {
     try {
-      const channel = await this.channelsService.findOne({
-        id: createMessageInput.channelId,
-      });
-
-      if (!channel) {
-        throw new ChannelNotFoundError();
-      }
-
-      const member = await this.channelMembersService.findOne({
-        userId: currentUser.id,
-        channelId: createMessageInput.channelId,
-      });
-
-      if (!member) {
-        throw new UserNotMemberOfChannelError();
-      }
+      const { channel } = await this.channelsService.isChannelMember(
+        createMessageInput.channelId,
+        currentUser.id,
+      );
 
       const client = await this.centrifugoService.connectToCentrifugo(
         currentUser.id,
@@ -171,6 +158,28 @@ export class ChatsResolver {
       );
 
       return chat;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('leaveChannel')
+  async leaveChannel(
+    @CurrentUser() currentUser: User,
+    @Args('channelId') channelId: string,
+  ): Promise<string> {
+    try {
+      await this.channelsService.isChannelMember(channelId, currentUser.id);
+
+      await this.channelMembersService.remove({
+        userId: currentUser.id,
+        channelId,
+      });
+
+      return 'Channel left successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -237,22 +246,7 @@ export class ChatsResolver {
     @Args('channelId') channelId: string,
   ) {
     try {
-      const channel = await this.channelsService.findOne({
-        id: channelId,
-      });
-
-      if (!channel) {
-        throw new ChannelNotFoundError();
-      }
-
-      const member = await this.channelMembersService.findOne({
-        userId: currentUser.id,
-        channelId,
-      });
-
-      if (!member) {
-        throw new UserNotMemberOfChannelError();
-      }
+      await this.channelsService.isChannelMember(channelId, currentUser.id);
 
       await this.chatsService.remove({ id: channelId });
 
@@ -304,20 +298,10 @@ export class ChatsResolver {
       const offset = get(filter, 'offset');
       const limit = get(filter, 'limit');
 
-      const channel = await this.channelsService.findOne({ id: channelId });
-
-      if (!channel) {
-        throw new ChannelNotFoundError();
-      }
-
-      const member = await this.channelMembersService.findOne({
-        userId: currentUser.id,
+      const { channel } = await this.channelsService.isChannelMember(
         channelId,
-      });
-
-      if (!member) {
-        throw new UserNotMemberOfChannelError();
-      }
+        currentUser.id,
+      );
 
       const client = await this.centrifugoService.connectToCentrifugo(
         currentUser.id,
