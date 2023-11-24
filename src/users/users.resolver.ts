@@ -14,6 +14,7 @@ import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
+import { recoveryOption } from 'src/utils/constants';
 import { generateOtp } from 'src/utils/otp-generator';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyEmailInput } from './dto/verify-email.input';
@@ -42,7 +43,6 @@ import {
   UsernameAlreadyExistsError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
-import { recoveryOption } from 'src/utils/constants';
 
 @Resolver('User')
 export class UsersResolver {
