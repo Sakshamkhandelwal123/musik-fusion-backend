@@ -27,6 +27,7 @@ import { ChannelMembersService } from './channel-members.service';
 import { UserAlreadyNotFriendError } from 'src/utils/errors/friend';
 import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
 import {
+  CannotDeleteOthersChatError,
   ChannelNotFoundError,
   MessageNotFoundError,
   SelfChannelNotAllowedError,
@@ -196,6 +197,66 @@ export class ChatsResolver {
       await this.chatsService.remove({ id: chatId });
 
       return 'Message deleted successfully';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('deleteBulkChats')
+  async deleteBulkChats(
+    @CurrentUser() currentUser: User,
+    @Args('chatIds') chatIds: string[],
+  ) {
+    try {
+      const chats = await this.chatsService.findAll({
+        id: chatIds,
+        userId: currentUser.id,
+      });
+
+      if (chatIds.length !== chats.length) {
+        throw new CannotDeleteOthersChatError();
+      }
+
+      await this.chatsService.remove({ id: chatIds });
+
+      return 'Messages deleted successfully';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('deleteAllChats')
+  async deleteAllChats(
+    @CurrentUser() currentUser: User,
+    @Args('channelId') channelId: string,
+  ) {
+    try {
+      const channel = await this.channelsService.findOne({
+        id: channelId,
+      });
+
+      if (!channel) {
+        throw new ChannelNotFoundError();
+      }
+
+      const member = await this.channelMembersService.findOne({
+        userId: currentUser.id,
+        channelId,
+      });
+
+      if (!member) {
+        throw new UserNotMemberOfChannelError();
+      }
+
+      await this.chatsService.remove({ id: channelId });
+
+      return 'Messages deleted successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
