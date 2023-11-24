@@ -10,6 +10,7 @@ import { Public } from 'src/auth/decorators/public';
 import { generateOtp } from 'src/utils/otp-generator';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { VerifyEmailInput } from './dto/verify-email.input';
+import { ChannelsService } from 'src/chats/channels.service';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
 import { WrongInputValueError } from 'src/utils/errors/common';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
@@ -29,6 +30,7 @@ export class UsersResolver {
   constructor(
     private readonly usersService: UsersService,
     private readonly sendgridService: SendgridService,
+    private readonly channelsService: ChannelsService,
   ) {}
 
   @Public()
@@ -220,6 +222,17 @@ export class UsersResolver {
         { emailOtp: null, isEmailVerified: true },
         { id: user.id },
       );
+
+      const channel = await this.channelsService.findOne({
+        createdBy: user.id,
+      });
+
+      if (!channel) {
+        await this.channelsService.create({
+          name: user.id,
+          createdBy: user.id,
+        });
+      }
 
       return 'Email verification successful';
     } catch (error) {

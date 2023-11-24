@@ -4,14 +4,17 @@
 
 ### Query
 
-| Name              |        Auth        | GraphQL Input |
-| :---------------- | :----------------: | :------------ |
-| me                | :white_check_mark: |               |
-| getUserByUsername |        :x:         | username      |
-| getUserFollowers  |        :x:         | username      |
-| getUserFollowing  |        :x:         | username      |
-| getUserFriends    | :white_check_mark: | username      |
-| getFriendRequests | :white_check_mark: |               |
+| Name                    |        Auth        | GraphQL Input     |
+| :---------------------- | :----------------: | :---------------- |
+| me                      | :white_check_mark: |                   |
+| getUserByUsername       |        :x:         | username          |
+| getUserFollowers        |        :x:         | username          |
+| getUserFollowing        |        :x:         | username          |
+| getUserFriends          | :white_check_mark: | username          |
+| getFriendRequests       | :white_check_mark: |                   |
+| getAllChats             | :white_check_mark: | channelName       |
+| getMySubscribedChannels | :white_check_mark: |                   |
+| getAllChatsByChannel    | :white_check_mark: | channelId, filter |
 
 ### Mutation
 
@@ -31,6 +34,8 @@
 | friendUnfriendAUser     | :white_check_mark: | followingUserId, isFriend                  |
 | handleFriendRequest     | :white_check_mark: | friendUserId, status                       |
 | withdrawFriendRequest   | :white_check_mark: | friendUserId                               |
+| sendMessage             | :white_check_mark: | channelId, message                         |
+| joinChannel             | :white_check_mark: | friendUserId                               |
 
 ## Rest Apis
 

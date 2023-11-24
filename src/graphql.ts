@@ -14,6 +14,16 @@ export enum FriendRequestStatus {
     PENDING = "PENDING"
 }
 
+export interface CreateMessageInput {
+    message: string;
+    channelId: string;
+}
+
+export interface Filter {
+    limit: number;
+    offset: number;
+}
+
 export interface FriendUnfriendInput {
     followingUserId: string;
     isFriend: boolean;
@@ -48,6 +58,61 @@ export interface VerifyNewPasswordInput {
     email: string;
     otp: number;
     newPassword: string;
+}
+
+export interface Chat {
+    id: string;
+    message: string;
+    isWatched: boolean;
+    channelId: string;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Channel {
+    id: string;
+    name: string;
+    createdBy: string;
+    lastMessageTimestamp?: Nullable<Date>;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface ChatPaginatedResponse {
+    total: number;
+    limit: number;
+    offset: number;
+    chats: Chat[];
+}
+
+export interface IQuery {
+    getMySubscribedChannels(): Channel[] | Promise<Channel[]>;
+    getAllChatsByChannel(channelId: string, filter?: Nullable<Filter>): ChatPaginatedResponse | Promise<ChatPaginatedResponse>;
+    getFriendRequests(): FriendRequestResponse | Promise<FriendRequestResponse>;
+    getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
+    getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
+    getUserFollowing(username: string): UserFollowingResponse | Promise<UserFollowingResponse>;
+    me(): User | Promise<User>;
+    getUserByUsername(username: string): User | Promise<User>;
+}
+
+export interface IMutation {
+    joinChannel(friendUserId: string): Channel | Promise<Channel>;
+    sendMessage(createMessageInput: CreateMessageInput): Chat | Promise<Chat>;
+    withdrawFriendRequest(friendUserId: string): string | Promise<string>;
+    followUser(followUserInput: FollowUserInput): string | Promise<string>;
+    unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
+    friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
+    handleFriendRequest(friendUserId: string, status: FriendRequestStatus): string | Promise<string>;
+    resetPassword(): string | Promise<string>;
+    forgotPassword(email: string): string | Promise<string>;
+    signUp(signUpInput: SignUpInput): string | Promise<string>;
+    deleteUserAccount(username: string): string | Promise<string>;
+    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
+    resendVerificationEmail(email: string): string | Promise<string>;
+    signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
+    verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
 }
 
 export interface Friend {
@@ -86,31 +151,6 @@ export interface UserFollowingResponse {
 export interface UserFollowerResponse {
     total: number;
     followers: Friend[];
-}
-
-export interface IQuery {
-    getFriendRequests(): FriendRequestResponse | Promise<FriendRequestResponse>;
-    getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
-    getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
-    getUserFollowing(username: string): UserFollowingResponse | Promise<UserFollowingResponse>;
-    me(): User | Promise<User>;
-    getUserByUsername(username: string): User | Promise<User>;
-}
-
-export interface IMutation {
-    withdrawFriendRequest(friendUserId: string): string | Promise<string>;
-    followUser(followUserInput: FollowUserInput): string | Promise<string>;
-    unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
-    friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
-    handleFriendRequest(friendUserId: string, status: FriendRequestStatus): string | Promise<string>;
-    resetPassword(): string | Promise<string>;
-    forgotPassword(email: string): string | Promise<string>;
-    signUp(signUpInput: SignUpInput): string | Promise<string>;
-    deleteUserAccount(username: string): string | Promise<string>;
-    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
-    resendVerificationEmail(email: string): string | Promise<string>;
-    signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
-    verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
 }
 
 export interface User {

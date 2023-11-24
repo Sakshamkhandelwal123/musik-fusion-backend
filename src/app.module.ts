@@ -16,6 +16,7 @@ import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { CommonModule } from './common/common.module';
+import { ChatsModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
 
 @Module({
@@ -59,6 +60,7 @@ import { FriendsModule } from './friends/friends.module';
     AuthModule,
     UsersModule,
     CommonModule,
+    ChatsModule,
     FriendsModule,
   ],
   providers: [

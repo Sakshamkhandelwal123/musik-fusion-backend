@@ -40,7 +40,7 @@ export class UserAlreadyNotFriendError extends HttpException {
   constructor() {
     super(
       {
-        message: 'You are already not a friend of this user',
+        message: 'You are not a friend of this user',
         code: 'USER_ALREADY_NOT_FRIEND',
       },
       HttpStatus.BAD_REQUEST,

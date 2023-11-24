@@ -102,4 +102,10 @@ CLOUDINARY_API_KEY= # Cloudinary api key
 CLOUDINARY_API_SECRET_KEY= # Cloudinary secret key
 ```
 
+### Centrifugo
+
+```
+TOKEN_HMAC_SECRET_KEY= # The private key used to sign centrifugo JWT token
+```
+
 Make sure to replace the placeholder values with your own values before starting the application.

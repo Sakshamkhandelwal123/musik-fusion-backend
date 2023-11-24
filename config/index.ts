@@ -40,4 +40,8 @@ export const applicationConfig = {
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecretKey: process.env.CLOUDINARY_API_SECRET_KEY,
   },
+
+  centrifugo: {
+    hmacSecretKey: process.env.TOKEN_HMAC_SECRET_KEY,
+  },
 };

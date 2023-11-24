@@ -1,0 +1,47 @@
+scalar Date
+
+type Chat {
+  id: String!
+  message: String!
+  isWatched: Boolean!
+  channelId: String!
+  userId: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Channel {
+  id: String!
+  name: String!
+  createdBy: String!
+  lastMessageTimestamp: Date
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type ChatPaginatedResponse {
+  total: Int!
+  limit: Int!
+  offset: Int!
+  chats: [Chat!]!
+}
+
+input CreateMessageInput {
+  message: String!
+  channelId: String!
+}
+
+input Filter {
+  limit: Int!
+  offset: Int!
+}
+
+type Query {
+  getMySubscribedChannels: [Channel!]!
+  getAllChatsByChannel(channelId: String!, filter: Filter): ChatPaginatedResponse!
+}
+
+type Mutation {
+  joinChannel(friendUserId: String!): Channel!
+  sendMessage(createMessageInput: CreateMessageInput!): Chat!
+}
