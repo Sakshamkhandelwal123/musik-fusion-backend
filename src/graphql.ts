@@ -60,6 +60,13 @@ export interface VerifyNewPasswordInput {
     newPassword: string;
 }
 
+export interface UpdateUserInput {
+    firstName?: Nullable<string>;
+    lastName?: Nullable<string>;
+    username?: Nullable<string>;
+    phoneNumber?: Nullable<string>;
+}
+
 export interface Chat {
     id: string;
     message: string;
@@ -109,9 +116,10 @@ export interface IMutation {
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
     deleteUserAccount(username: string): string | Promise<string>;
-    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
     resendVerificationEmail(email: string): string | Promise<string>;
     signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
+    verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
+    updateUserProfile(updateUserInput: UpdateUserInput): string | Promise<string>;
     verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
 }
 
@@ -158,6 +166,7 @@ export interface User {
     firstName: string;
     lastName: string;
     username?: Nullable<string>;
+    profileImage?: Nullable<string>;
     email: string;
     isEmailVerified: boolean;
     phoneNumber?: Nullable<string>;

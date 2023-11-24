@@ -5,6 +5,7 @@ type User {
   firstName: String!
   lastName: String!
   username: String
+  profileImage: String
   email: String!
   isEmailVerified: Boolean!
   phoneNumber: String
@@ -41,6 +42,13 @@ input VerifyNewPasswordInput {
   newPassword: String!
 }
 
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  username: String
+  phoneNumber: String
+}
+
 type Query {
   me: User!
   getUserByUsername(username: String!): User!
@@ -51,8 +59,9 @@ type Mutation {
   forgotPassword(email: String!): String!
   signUp(signUpInput: SignUpInput!): String!
   deleteUserAccount(username: String!): String!
-  verifyEmail(verifyEmailInput: VerifyEmailInput!): String!
   resendVerificationEmail(email: String!): String! 
   signIn(signInInput: SignInInput!): SignInResponse!
+  verifyEmail(verifyEmailInput: VerifyEmailInput!): String!
+  updateUserProfile(updateUserInput: UpdateUserInput!): String!
   verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput!): String!
 }
