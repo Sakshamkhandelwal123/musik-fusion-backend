@@ -36,4 +36,30 @@ export class CloudinaryService {
       );
     }
   }
+
+  async getImageUrl(publicId: string): Promise<string> {
+    try {
+      const result = await v2.api.resource(publicId);
+
+      return result.url;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async deleteImage(publicId: string): Promise<{ result: string }> {
+    try {
+      const result = await v2.uploader.destroy(publicId);
+
+      return result;
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }
