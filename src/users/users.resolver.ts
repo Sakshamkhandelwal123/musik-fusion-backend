@@ -42,6 +42,7 @@ import {
   UsernameAlreadyExistsError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
+import { recoveryOption } from 'src/utils/constants';
 
 @Resolver('User')
 export class UsersResolver {
@@ -140,7 +141,7 @@ export class UsersResolver {
 
       await this.sendgridService.sendEmail(email, {
         otp: emailOtp,
-        recoveryOption: 'Recover',
+        recoveryOption: recoveryOption.RECOVER,
         templateName: 'PASSWORD_VERIFICATION',
       });
 
@@ -202,7 +203,7 @@ export class UsersResolver {
 
       await this.sendgridService.sendEmail(currentUser.email, {
         otp: emailOtp,
-        recoveryOption: 'Reset',
+        recoveryOption: recoveryOption.RESET,
         templateName: 'PASSWORD_VERIFICATION',
       });
 
