@@ -47,3 +47,15 @@ export class SelfChannelNotAllowedError extends HttpException {
     );
   }
 }
+
+export class MessageNotFoundError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'Message not found',
+        code: 'MESSAGE_NOT_FOUND',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
