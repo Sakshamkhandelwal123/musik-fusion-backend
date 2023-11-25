@@ -108,4 +108,11 @@ CLOUDINARY_API_SECRET_KEY= # Cloudinary secret key
 TOKEN_HMAC_SECRET_KEY= # The private key used to sign centrifugo JWT token
 ```
 
+### Redis
+
+```
+REDIS_HOST= # The hostname of redis server
+REDIS_PORT= # The port number on which the redis server is listening
+```
+
 Make sure to replace the placeholder values with your own values before starting the application.
