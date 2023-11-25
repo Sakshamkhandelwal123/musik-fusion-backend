@@ -44,4 +44,9 @@ export const applicationConfig = {
   centrifugo: {
     hmacSecretKey: process.env.TOKEN_HMAC_SECRET_KEY,
   },
+
+  redis: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+  },
 };
