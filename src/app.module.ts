@@ -4,6 +4,7 @@ import { Dialect } from 'sequelize';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
+import { BullModule } from '@nestjs/bullmq';
 import { ApolloDriver } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -14,9 +15,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
+import { ChatsModule } from './chats/chats.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { CommonModule } from './common/common.module';
-import { ChatsModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
 
 @Module({
@@ -56,6 +57,12 @@ import { FriendsModule } from './friends/friends.module';
       },
       synchronize: true,
       fieldResolverEnhancers: ['guards'],
+    }),
+    BullModule.forRoot({
+      connection: {
+        host: applicationConfig.redis.host,
+        port: parseInt(applicationConfig.redis.port, 10),
+      },
     }),
     AuthModule,
     UsersModule,
