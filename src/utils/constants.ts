@@ -16,3 +16,7 @@ export const recoveryOption = {
 export const queueNames = {
   DATA_CLEANUP_QUEUE: 'DATA_CLEANUP_QUEUE',
 };
+
+export const deleteEntity = {
+  USER: 'USER',
+};
