@@ -19,4 +19,5 @@ export const queueNames = {
 
 export const deleteEntity = {
   USER: 'USER',
+  FRIEND: 'FRIEND',
 };
