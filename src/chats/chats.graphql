@@ -44,5 +44,8 @@ type Query {
 type Mutation {
   joinChannel(friendUserId: String!): Channel!
   sendMessage(createMessageInput: CreateMessageInput!): Chat!
+  leaveChannel(channelId: String!): String!
   deleteChat(chatId: String!): String!
+  deleteBulkChats(chatIds: [String!]!): String!
+  deleteAllChats(channelId: String!): String!
 }

@@ -14,6 +14,7 @@ import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
+import { recoveryOption } from 'src/utils/constants';
 import { generateOtp } from 'src/utils/otp-generator';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyEmailInput } from './dto/verify-email.input';
@@ -140,7 +141,7 @@ export class UsersResolver {
 
       await this.sendgridService.sendEmail(email, {
         otp: emailOtp,
-        recoveryOption: 'Recover',
+        recoveryOption: recoveryOption.RECOVER,
         templateName: 'PASSWORD_VERIFICATION',
       });
 
@@ -202,7 +203,7 @@ export class UsersResolver {
 
       await this.sendgridService.sendEmail(currentUser.email, {
         otp: emailOtp,
-        recoveryOption: 'Reset',
+        recoveryOption: recoveryOption.RESET,
         templateName: 'PASSWORD_VERIFICATION',
       });
 

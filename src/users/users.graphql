@@ -58,10 +58,10 @@ type Mutation {
   resetPassword: String!
   forgotPassword(email: String!): String!
   signUp(signUpInput: SignUpInput!): String!
-  deleteUserAccount(username: String!): String!
   resendVerificationEmail(email: String!): String! 
   signIn(signInInput: SignInInput!): SignInResponse!
   verifyEmail(verifyEmailInput: VerifyEmailInput!): String!
-  updateUserProfile(updateUserInput: UpdateUserInput!): String!
   verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput!): String!
+  updateUserProfile(updateUserInput: UpdateUserInput!): String!
+  deleteUserAccount(username: String!): String!
 }

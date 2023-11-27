@@ -27,11 +27,11 @@ import { ChannelMembersService } from './channel-members.service';
 import { UserAlreadyNotFriendError } from 'src/utils/errors/friend';
 import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
 import {
+  CannotDeleteOthersChatError,
   ChannelNotFoundError,
   MessageNotFoundError,
   SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
-  UserNotMemberOfChannelError,
 } from 'src/utils/errors/chat';
 
 @Resolver('Chat')
@@ -124,22 +124,10 @@ export class ChatsResolver {
     @Args('createMessageInput') createMessageInput: CreateMessageInput,
   ): Promise<Chat> {
     try {
-      const channel = await this.channelsService.findOne({
-        id: createMessageInput.channelId,
-      });
-
-      if (!channel) {
-        throw new ChannelNotFoundError();
-      }
-
-      const member = await this.channelMembersService.findOne({
-        userId: currentUser.id,
-        channelId: createMessageInput.channelId,
-      });
-
-      if (!member) {
-        throw new UserNotMemberOfChannelError();
-      }
+      const { channel } = await this.channelsService.isChannelMember(
+        createMessageInput.channelId,
+        currentUser.id,
+      );
 
       const client = await this.centrifugoService.connectToCentrifugo(
         currentUser.id,
@@ -178,6 +166,28 @@ export class ChatsResolver {
     }
   }
 
+  @Mutation('leaveChannel')
+  async leaveChannel(
+    @CurrentUser() currentUser: User,
+    @Args('channelId') channelId: string,
+  ): Promise<string> {
+    try {
+      await this.channelsService.isChannelMember(channelId, currentUser.id);
+
+      await this.channelMembersService.remove({
+        userId: currentUser.id,
+        channelId,
+      });
+
+      return 'Channel left successfully';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
   @Mutation('deleteChat')
   async deleteChat(
     @CurrentUser() currentUser: User,
@@ -196,6 +206,51 @@ export class ChatsResolver {
       await this.chatsService.remove({ id: chatId });
 
       return 'Message deleted successfully';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('deleteBulkChats')
+  async deleteBulkChats(
+    @CurrentUser() currentUser: User,
+    @Args('chatIds') chatIds: string[],
+  ) {
+    try {
+      const chats = await this.chatsService.findAll({
+        id: chatIds,
+        userId: currentUser.id,
+      });
+
+      if (chatIds.length !== chats.length) {
+        throw new CannotDeleteOthersChatError();
+      }
+
+      await this.chatsService.remove({ id: chatIds });
+
+      return 'Messages deleted successfully';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Mutation('deleteAllChats')
+  async deleteAllChats(
+    @CurrentUser() currentUser: User,
+    @Args('channelId') channelId: string,
+  ) {
+    try {
+      await this.channelsService.isChannelMember(channelId, currentUser.id);
+
+      await this.chatsService.remove({ id: channelId });
+
+      return 'Messages deleted successfully';
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),
@@ -243,20 +298,10 @@ export class ChatsResolver {
       const offset = get(filter, 'offset');
       const limit = get(filter, 'limit');
 
-      const channel = await this.channelsService.findOne({ id: channelId });
-
-      if (!channel) {
-        throw new ChannelNotFoundError();
-      }
-
-      const member = await this.channelMembersService.findOne({
-        userId: currentUser.id,
+      const { channel } = await this.channelsService.isChannelMember(
         channelId,
-      });
-
-      if (!member) {
-        throw new UserNotMemberOfChannelError();
-      }
+        currentUser.id,
+      );
 
       const client = await this.centrifugoService.connectToCentrifugo(
         currentUser.id,

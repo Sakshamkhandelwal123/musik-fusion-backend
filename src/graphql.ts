@@ -107,7 +107,10 @@ export interface IQuery {
 export interface IMutation {
     joinChannel(friendUserId: string): Channel | Promise<Channel>;
     sendMessage(createMessageInput: CreateMessageInput): Chat | Promise<Chat>;
+    leaveChannel(channelId: string): string | Promise<string>;
     deleteChat(chatId: string): string | Promise<string>;
+    deleteBulkChats(chatIds: string[]): string | Promise<string>;
+    deleteAllChats(channelId: string): string | Promise<string>;
     withdrawFriendRequest(friendUserId: string): string | Promise<string>;
     followUser(followUserInput: FollowUserInput): string | Promise<string>;
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
