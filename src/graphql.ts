@@ -119,12 +119,12 @@ export interface IMutation {
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
-    deleteUserAccount(username: string): string | Promise<string>;
     resendVerificationEmail(email: string): string | Promise<string>;
     signIn(signInInput: SignInInput): SignInResponse | Promise<SignInResponse>;
     verifyEmail(verifyEmailInput: VerifyEmailInput): string | Promise<string>;
-    updateUserProfile(updateUserInput: UpdateUserInput): string | Promise<string>;
     verifyNewPassword(verifyNewPasswordInput: VerifyNewPasswordInput): string | Promise<string>;
+    updateUserProfile(updateUserInput: UpdateUserInput): string | Promise<string>;
+    deleteUserAccount(username: string): string | Promise<string>;
 }
 
 export interface Friend {
