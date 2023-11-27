@@ -29,6 +29,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
   ],
   controllers: [SpotifyController],
   exports: [
+    BullModule,
     SpotifyService,
     DateScalar,
     SendgridService,
