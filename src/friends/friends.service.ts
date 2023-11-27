@@ -1,7 +1,11 @@
+import { Queue } from 'bullmq';
 import { Injectable } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
 import { InjectModel } from '@nestjs/sequelize';
 
+import { queueNames } from 'src/utils/constants';
 import { Friend } from './entities/friend.entity';
+import { setGlobalQueueValue } from 'src/utils/helpers';
 import { CreateFollowerInput } from './dto/follow-user.input';
 
 @Injectable()
@@ -9,6 +13,9 @@ export class FriendsService {
   constructor(
     @InjectModel(Friend)
     private readonly friendModel: typeof Friend,
+
+    @InjectQueue(queueNames.DATA_CLEANUP_QUEUE)
+    private readonly dataCleanupQueue: Queue,
   ) {}
 
   create(createFollowerInput: CreateFollowerInput) {
@@ -44,9 +51,12 @@ export class FriendsService {
     });
   }
 
-  remove(condition = {}) {
+  async remove(condition = {}) {
+    await setGlobalQueueValue(this.dataCleanupQueue);
+
     return this.friendModel.destroy({
       where: condition,
+      individualHooks: true,
     });
   }
 }

@@ -80,6 +80,7 @@ export class UsersService {
 
     return this.userModel.destroy({
       where: condition,
+      individualHooks: true,
     });
   }
 
