@@ -14,7 +14,7 @@ export class SpotifyService {
     });
 
     this.axiosAccountClient = axios.create({
-      baseURL: 'https://accounts.spotify.com/api',
+      baseURL: 'https://accounts.spotify.com',
     });
   }
 
@@ -25,7 +25,7 @@ export class SpotifyService {
       client_secret: applicationConfig.spotify.clientSecret,
     };
 
-    const token = await this.axiosAccountClient.post('/token', data, {
+    const token = await this.axiosAccountClient.post('/api/token', data, {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
     });
 
