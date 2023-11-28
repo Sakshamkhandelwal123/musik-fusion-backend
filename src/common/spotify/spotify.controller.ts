@@ -1,5 +1,6 @@
-import { ApiTags } from '@nestjs/swagger';
+import { AES } from 'crypto-js';
 import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -8,13 +9,13 @@ import {
   Res,
 } from '@nestjs/common';
 
+import { applicationConfig } from 'config';
 import { SpotifyService } from './spotify.service';
+import { Public } from 'src/auth/decorators/public';
 import {
   generateRandomString,
   getErrorCodeAndMessage,
 } from 'src/utils/helpers';
-import { applicationConfig } from 'config';
-import { Public } from 'src/auth/decorators/public';
 
 @ApiTags('Spotify')
 @Controller('spotify')
@@ -41,6 +42,13 @@ export class SpotifyController {
     try {
       const state = generateRandomString(16);
       const scope = 'user-read-private user-read-email';
+
+      const encryptedState = AES.encrypt(
+        state,
+        applicationConfig.spotify.clientSecret,
+      ).toString();
+
+      res.cookie('state', encryptedState, { maxAge: 10 * 60 * 1000 }); //expire after 10 minutes
 
       const queryParams = new URLSearchParams({
         response_type: 'code',

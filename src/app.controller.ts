@@ -1,20 +1,33 @@
-import { Response } from 'express';
 import axios, { Axios } from 'axios';
+import { AES, enc } from 'crypto-js';
 import { ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Query, Res } from '@nestjs/common';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { Request, Response } from 'express';
+import {
+  Controller,
+  Get,
+  Query,
+  Res,
+  HttpException,
+  HttpStatus,
+  Req,
+} from '@nestjs/common';
 
 import { applicationConfig } from 'config';
 import { AppService } from './app.service';
 import { Public } from './auth/decorators/public';
 import { getErrorCodeAndMessage } from './utils/helpers';
+import { InvalidStateError } from './utils/errors/common';
+import { SpotifyService } from './common/spotify/spotify.service';
 
 @ApiTags('App')
 @Controller()
 export class AppController {
   private axiosAccountClient: Axios;
 
-  constructor(private readonly appService: AppService) {
+  constructor(
+    private readonly appService: AppService,
+    private readonly spotifyService: SpotifyService,
+  ) {
     this.axiosAccountClient = axios.create({
       baseURL: 'https://accounts.spotify.com',
     });
@@ -27,19 +40,33 @@ export class AppController {
   }
 
   @Public()
-  @Get('/redirect/data')
-  getData(): string {
-    return 'hello';
-  }
-
-  @Public()
   @Get('/redirect/callback')
   async callback(
     @Query('code') code: string,
     @Query('state') state: string,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
     try {
+      const encryptedStateCookie = req.cookies.state;
+
+      if (!encryptedStateCookie) {
+        throw new InvalidStateError();
+      }
+
+      const decryptedState = AES.decrypt(
+        encryptedStateCookie,
+        applicationConfig.spotify.clientSecret,
+      );
+
+      const originalState = decryptedState.toString(enc.Utf8);
+
+      if (originalState !== state) {
+        throw new InvalidStateError();
+      }
+
+      res.cookie('state', '', { maxAge: 0 });
+
       const data = {
         grant_type: 'authorization_code',
         code: code,
@@ -61,7 +88,7 @@ export class AppController {
         },
       });
 
-      console.log(token);
+      res.cookie('accessToken', token.data.access_token);
 
       res.redirect('/');
     } catch (error) {
@@ -70,29 +97,5 @@ export class AppController {
         HttpStatus.BAD_REQUEST,
       );
     }
-    // const payload = {
-    //   method: 'POST',
-    //   url: '/api/token',
-    //   headers: {
-    //     'Content-Type': 'application/x-www-form-urlencoded',
-    //   },
-    //   body: {
-    //     grant_type: 'authorization_code',
-    //     code,
-    //     redirect_uri: 'http://localhost:4000',
-    //   },
-    // };
-
-    // const authOptions = {
-    //   body: {
-    //     code: code,
-    //     redirect_uri: 'http://localhost:4000',
-    //     grant_type: 'authorization_code',
-    //   },
-    //   headers: {
-    //     'content-type': 'application/x-www-form-urlencoded',
-    //   },
-    //   json: true,
-    // };
   }
 }
