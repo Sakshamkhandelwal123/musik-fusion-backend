@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { customAlphabet } from 'nanoid';
 import { get, isEmpty, isNaN, isNil, isNull, isUndefined } from 'lodash';
 
 export const isNilOrEmpty = (value: any) =>
@@ -26,4 +27,13 @@ export const getErrorCodeAndMessage = (
       get(error, 'response.message', 'Internal Server Error'),
     ),
   };
+};
+
+export const generateRandomString = (length: number) => {
+  const randomString = customAlphabet(
+    'abcdefghijklmnopqrstuvwxyz0123456789',
+    length,
+  )();
+
+  return randomString;
 };
