@@ -41,4 +41,12 @@ export class SpotifyService {
 
     return response.data;
   }
+
+  async fetchProfile(accessToken: string) {
+    const result = await this.axiosRequest('GET', '/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return result;
+  }
 }

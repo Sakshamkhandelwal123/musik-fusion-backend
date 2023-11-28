@@ -15,6 +15,7 @@ import {
 import { applicationConfig } from 'config';
 import { AppService } from './app.service';
 import { Public } from './auth/decorators/public';
+import { UsersService } from './users/users.service';
 import { getErrorCodeAndMessage } from './utils/helpers';
 import { InvalidStateError } from './utils/errors/common';
 import { SpotifyService } from './common/spotify/spotify.service';
@@ -26,6 +27,7 @@ export class AppController {
 
   constructor(
     private readonly appService: AppService,
+    private readonly usersService: UsersService,
     private readonly spotifyService: SpotifyService,
   ) {
     this.axiosAccountClient = axios.create({
@@ -87,6 +89,19 @@ export class AppController {
           Authorization: authToken,
         },
       });
+
+      let userData: any;
+
+      if (token && token.data.access_token) {
+        userData = await this.spotifyService.fetchProfile(
+          token.data.access_token,
+        );
+
+        await this.usersService.update(
+          { spotifyId: userData.id },
+          { email: userData.email },
+        );
+      }
 
       res.cookie('accessToken', token.data.access_token);
 
