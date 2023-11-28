@@ -27,6 +27,7 @@ Made by combining music and fusion, Musikfusion is a web application that gives 
 7. Sequelize
 8. Sendgrid
 9. Cloudinary
+10. BullMq
 
 ## Installation
 
