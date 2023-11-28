@@ -44,6 +44,7 @@
     "libphonenumber-js": "^1.10.49",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
+    "nanoid": "^3.3.6",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.1.13",
