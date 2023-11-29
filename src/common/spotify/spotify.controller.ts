@@ -77,8 +77,6 @@ export class SpotifyController {
     try {
       const refreshToken = req.cookies?.spotify_refresh_token;
 
-      console.log(refreshToken);
-
       if (!refreshToken) {
         throw new RefreshTokenNotFoundError();
       }
