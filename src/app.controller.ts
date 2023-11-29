@@ -94,9 +94,7 @@ export class AppController {
       let userData: any;
 
       if (token && token.data.access_token) {
-        userData = await this.spotifyService.fetchProfile(
-          token.data.access_token,
-        );
+        userData = await this.spotifyService.me(token.data.access_token);
 
         const user = await this.usersService.findOne({ email: userData.email });
 

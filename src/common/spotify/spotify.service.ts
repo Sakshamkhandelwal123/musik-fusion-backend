@@ -66,8 +66,16 @@ export class SpotifyService {
     return response.data;
   }
 
-  async fetchProfile(accessToken: string) {
+  async me(accessToken: string) {
     const result = await this.axiosRequest('GET', '/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return result;
+  }
+
+  async fetchProfile(userId: string, accessToken: string) {
+    const result = await this.axiosRequest('GET', '/users/' + userId, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
