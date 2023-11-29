@@ -42,5 +42,8 @@
 
 | Name                                      | Type |        Auth        | Body Input | Query Params |
 | :---------------------------------------- | :--: | :----------------: | :--------- | :----------- |
+| /                                         | GET  |        :x:         |            |              |
+| /redirect/callback                        | GET  |        :x:         |            | code, state  |
 | /spotify/get-spotify-authentication-token | GET  |        :x:         |            |              |
-| /upload-image                             | POST | :white_check_mark: |            | image        |
+| /user/upload-image                        | POST | :white_check_mark: |            | image        |
+| /spotify/login                            | GET  |        :x:         |            |              |
