@@ -1,17 +1,19 @@
 import { AES } from 'crypto-js';
-import { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import {
   Controller,
   Get,
   HttpException,
   HttpStatus,
+  Req,
   Res,
 } from '@nestjs/common';
 
 import { applicationConfig } from 'config';
 import { SpotifyService } from './spotify.service';
 import { Public } from 'src/auth/decorators/public';
+import { RefreshTokenNotFoundError } from 'src/utils/errors/common';
 import {
   generateRandomString,
   getErrorCodeAndMessage,
@@ -61,6 +63,34 @@ export class SpotifyController {
       return res.redirect(
         'https://accounts.spotify.com/authorize?' + queryParams.toString(),
       );
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @Public()
+  @Get('/refresh-token')
+  async refreshToken(@Req() req: Request, @Res() res: Response) {
+    try {
+      const refreshToken = req.cookies?.spotify_refresh_token;
+
+      console.log(refreshToken);
+
+      if (!refreshToken) {
+        throw new RefreshTokenNotFoundError();
+      }
+
+      const accessToken =
+        await this.spotifyService.getRefreshToken(refreshToken);
+
+      res.cookie('spotify_access_token', accessToken, {
+        maxAge: 60 * 60 * 1000,
+      });
+
+      res.redirect('/');
     } catch (error) {
       throw new HttpException(
         getErrorCodeAndMessage(error),

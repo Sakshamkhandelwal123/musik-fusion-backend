@@ -32,6 +32,30 @@ export class SpotifyService {
     return token.data.access_token;
   }
 
+  async getRefreshToken(refreshToken: string) {
+    const data = {
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    };
+
+    const authToken =
+      'Basic ' +
+      Buffer.from(
+        applicationConfig.spotify.clientId +
+          ':' +
+          applicationConfig.spotify.clientSecret,
+      ).toString('base64');
+
+    const token = await this.axiosAccountClient.post('/api/token', data, {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        Authorization: authToken,
+      },
+    });
+
+    return token.data.access_token;
+  }
+
   async axiosRequest(method: string, url: string, options?: object) {
     const response = await this.axiosApiClient.request({
       method,

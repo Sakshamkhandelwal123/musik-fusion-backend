@@ -114,6 +114,8 @@ export class AppController {
         maxAge: 60 * 60 * 1000,
       });
 
+      res.cookie('spotify_refresh_token', token.data.refresh_token);
+
       res.redirect('/');
     } catch (error) {
       throw new HttpException(
