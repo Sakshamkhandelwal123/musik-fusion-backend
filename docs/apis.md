@@ -47,3 +47,4 @@
 | /spotify/get-spotify-authentication-token | GET  |        :x:         |            |              |
 | /user/upload-image                        | POST | :white_check_mark: |            | image        |
 | /spotify/login                            | GET  |        :x:         |            |              |
+| /spotify/refresh-token                    | GET  |        :x:         |            |              |
