@@ -16,6 +16,7 @@ import { applicationConfig } from 'config';
 import { AppService } from './app.service';
 import { Public } from './auth/decorators/public';
 import { UsersService } from './users/users.service';
+import { InvalidUserError } from './utils/errors/user';
 import { getErrorCodeAndMessage } from './utils/helpers';
 import { InvalidStateError } from './utils/errors/common';
 import { SpotifyService } from './common/spotify/spotify.service';
@@ -97,13 +98,21 @@ export class AppController {
           token.data.access_token,
         );
 
+        const user = await this.usersService.findOne({ email: userData.email });
+
+        if (!user) {
+          throw new InvalidUserError();
+        }
+
         await this.usersService.update(
           { spotifyId: userData.id },
           { email: userData.email },
         );
       }
 
-      res.cookie('accessToken', token.data.access_token);
+      res.cookie('spotify_access_token', token.data.access_token, {
+        maxAge: 60 * 60 * 1000,
+      });
 
       res.redirect('/');
     } catch (error) {

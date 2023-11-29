@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import { compare, genSalt, hash } from 'bcryptjs';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import {
@@ -7,6 +8,7 @@ import {
   Query,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql';
 
 import { User } from './entities/user.entity';
@@ -85,6 +87,7 @@ export class UsersResolver {
   @Mutation('signIn')
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
+    @Context('req') req: Request,
   ): Promise<{ user: User; accessToken: string; expiresIn: number }> {
     try {
       const { email, password } = signInInput;
@@ -108,6 +111,10 @@ export class UsersResolver {
       const jwtToken = this.usersService.generateToken({
         id: user.id,
         email: user.email,
+      });
+
+      req.res.cookie('mf_access_token', jwtToken.token, {
+        maxAge: 24 * 60 * 60 * 1000,
       });
 
       const response = {
