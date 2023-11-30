@@ -14,7 +14,7 @@ export class SpotifyService {
     });
 
     this.axiosAccountClient = axios.create({
-      baseURL: 'https://accounts.spotify.com/api',
+      baseURL: 'https://accounts.spotify.com',
     });
   }
 
@@ -25,8 +25,32 @@ export class SpotifyService {
       client_secret: applicationConfig.spotify.clientSecret,
     };
 
-    const token = await this.axiosAccountClient.post('/token', data, {
+    const token = await this.axiosAccountClient.post('/api/token', data, {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    });
+
+    return token.data.access_token;
+  }
+
+  async getRefreshToken(refreshToken: string) {
+    const data = {
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    };
+
+    const authToken =
+      'Basic ' +
+      Buffer.from(
+        applicationConfig.spotify.clientId +
+          ':' +
+          applicationConfig.spotify.clientSecret,
+      ).toString('base64');
+
+    const token = await this.axiosAccountClient.post('/api/token', data, {
+      headers: {
+        'content-type': 'application/x-www-form-urlencoded',
+        Authorization: authToken,
+      },
     });
 
     return token.data.access_token;
@@ -40,5 +64,21 @@ export class SpotifyService {
     });
 
     return response.data;
+  }
+
+  async me(accessToken: string) {
+    const result = await this.axiosRequest('GET', '/me', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return result;
+  }
+
+  async fetchProfile(userId: string, accessToken: string) {
+    const result = await this.axiosRequest('GET', '/users/' + userId, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    return result;
   }
 }

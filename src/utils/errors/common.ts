@@ -23,3 +23,27 @@ export class ImageNotFoundError extends HttpException {
     );
   }
 }
+
+export class InvalidStateError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'State is invalid',
+        code: 'INVALID_STATE',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}
+
+export class RefreshTokenNotFoundError extends HttpException {
+  constructor() {
+    super(
+      {
+        message: 'No refresh token found',
+        code: 'REFRESH_TOKEN_NOT_FOUND',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+}

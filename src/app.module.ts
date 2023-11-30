@@ -56,6 +56,11 @@ import { FriendsModule } from './friends/friends.module';
       definitions: {
         path: join(process.cwd(), 'src/graphql.ts'),
       },
+      cors: {
+        credentials: true,
+        origin: true,
+      },
+      context: ({ req }) => ({ req }),
       synchronize: true,
       fieldResolverEnhancers: ['guards'],
     }),
