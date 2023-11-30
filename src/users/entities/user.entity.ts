@@ -48,6 +48,9 @@ export class User extends Model {
   @Column({ allowNull: true })
   emailOtp: number;
 
+  @Column({ allowNull: true })
+  spotifyId: string;
+
   @Column({ allowNull: false })
   @CreatedAt
   createdAt: Date;

@@ -14,9 +14,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
+import { ChatsModule } from './chats/chats.module';
 import { AuthGuard } from './auth/guards/auth.guard';
 import { CommonModule } from './common/common.module';
-import { ChatsModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
 
 @Module({
@@ -54,6 +54,11 @@ import { FriendsModule } from './friends/friends.module';
       definitions: {
         path: join(process.cwd(), 'src/graphql.ts'),
       },
+      cors: {
+        credentials: true,
+        origin: true,
+      },
+      context: ({ req }) => ({ req }),
       synchronize: true,
       fieldResolverEnhancers: ['guards'],
     }),

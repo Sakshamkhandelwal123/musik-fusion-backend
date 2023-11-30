@@ -32,4 +32,8 @@ export class UpdateUserInput {
   @IsOptional()
   @IsString()
   profileImage?: string;
+
+  @IsOptional()
+  @IsString()
+  spotifyId?: string;
 }

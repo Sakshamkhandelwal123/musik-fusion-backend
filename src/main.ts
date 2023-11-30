@@ -1,6 +1,7 @@
 import helmet from 'helmet';
 import * as morgan from 'morgan';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -15,6 +16,8 @@ async function bootstrap() {
     credentials: true,
     allowedHeaders: ['Authorization', 'Content-Type'],
   });
+
+  app.use(cookieParser());
 
   app.useGlobalPipes(new ValidationPipe());
 
