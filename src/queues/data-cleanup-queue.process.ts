@@ -1,15 +1,21 @@
 import { Job } from 'bullmq';
+import { Op } from 'sequelize';
 import { HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 
 import { User } from 'src/users/entities/user.entity';
+import { ChatsService } from 'src/chats/chats.service';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { Friend } from 'src/friends/entities/friend.entity';
+import { FriendsService } from 'src/friends/friends.service';
 import { deleteEntity, queueNames } from 'src/utils/constants';
 
 @Processor(queueNames.DATA_CLEANUP_QUEUE)
 export class DataCleanupQueueProcessor extends WorkerHost {
-  constructor() {
+  constructor(
+    private readonly friendsService: FriendsService,
+    private readonly chatsService: ChatsService,
+  ) {
     super();
   }
 
@@ -49,7 +55,13 @@ export class DataCleanupQueueProcessor extends WorkerHost {
     Logger.error(`Failed job of id ${job.id} ${error}`);
   }
 
-  async deleteUserData(data: User) {}
+  async deleteUserData(data: User) {
+    await this.friendsService.remove({
+      [Op.or]: [{ userId: data.id }, { followingUserId: data.id }],
+    });
+
+    await this.chatsService.remove({ userId: data.id });
+  }
 
   async deleteFriendData(data: Friend) {}
 }
