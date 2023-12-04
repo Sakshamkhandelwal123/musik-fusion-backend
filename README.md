@@ -116,4 +116,12 @@ REDIS_HOST= # The hostname of redis server
 REDIS_PORT= # The port number on which the redis server is listening
 ```
 
+### Kafka
+
+```
+KAFKA_USERNAME= # The username for connecting to Kafka brokers
+KAFKA_PASSWORD= # The password for connecting to Kafka brokers
+KAFKA_BROKERS= # A comma-separated list of Kafka brokers to connect to
+```
+
 Make sure to replace the placeholder values with your own values before starting the application.
