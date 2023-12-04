@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-import { FriendRequestStatus } from '../entities/freind-request.entity';
+import { FriendRequestStatus } from '../entities/friend-request.entity';
 
 export class CreateFriendRequestInput {
   @IsString()

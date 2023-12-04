@@ -4,7 +4,7 @@ import { Resolver, ResolveField, Parent } from '@nestjs/graphql';
 import { Public } from 'src/auth/decorators/public';
 import { UsersService } from 'src/users/users.service';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
-import { FriendRequest } from './entities/freind-request.entity';
+import { FriendRequest } from './entities/friend-request.entity';
 
 @Resolver('FriendRequest')
 export class FriendRequestsResolver {

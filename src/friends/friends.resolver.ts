@@ -23,7 +23,7 @@ import { FriendRequestsService } from './friend-requests.service';
 import {
   FriendRequest,
   FriendRequestStatus,
-} from './entities/freind-request.entity';
+} from './entities/friend-request.entity';
 import {
   CannotFollowYourselfError,
   CannotFriendUnfriendYourselfError,
