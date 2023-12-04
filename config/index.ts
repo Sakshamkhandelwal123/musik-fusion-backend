@@ -49,4 +49,10 @@ export const applicationConfig = {
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT,
   },
+
+  kafka: {
+    username: process.env.KAFKA_USERNAME,
+    password: process.env.KAFKA_PASSWORD,
+    brokers: process.env.KAFKA_BROKERS,
+  },
 };

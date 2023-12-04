@@ -1,3 +1,7 @@
+import 'dotenv/config';
+
+import { applicationConfig } from 'config';
+
 export const environment = {
   DEVELOPMENT: 'development',
   MAIN: 'main',
@@ -20,4 +24,11 @@ export const queueNames = {
 export const deleteEntity = {
   USER: 'USER',
   CHANNEL: 'CHANNEL',
+};
+
+export const kafkaClientId = {
+  clientId:
+    process.env.APP_ENV === environment.MAIN
+      ? 'mf-events-process'
+      : `mf-events-process-${process.env.APP_ENV}`,
 };
