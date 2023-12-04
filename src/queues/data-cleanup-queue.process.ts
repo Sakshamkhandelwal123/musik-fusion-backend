@@ -6,15 +6,21 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq';
 import { User } from 'src/users/entities/user.entity';
 import { ChatsService } from 'src/chats/chats.service';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
-import { Friend } from 'src/friends/entities/friend.entity';
+import { Channel } from 'src/chats/entities/channel.entity';
 import { FriendsService } from 'src/friends/friends.service';
+import { ChannelsService } from 'src/chats/channels.service';
 import { deleteEntity, queueNames } from 'src/utils/constants';
+import { ChannelMembersService } from 'src/chats/channel-members.service';
+import { FriendRequestsService } from 'src/friends/friend-requests.service';
 
 @Processor(queueNames.DATA_CLEANUP_QUEUE)
 export class DataCleanupQueueProcessor extends WorkerHost {
   constructor(
     private readonly friendsService: FriendsService,
     private readonly chatsService: ChatsService,
+    private readonly channelsService: ChannelsService,
+    private readonly channelMembersService: ChannelMembersService,
+    private readonly friendRequestsService: FriendRequestsService,
   ) {
     super();
   }
@@ -28,8 +34,8 @@ export class DataCleanupQueueProcessor extends WorkerHost {
         case deleteEntity.USER:
           await this.deleteUserData(actionData);
           break;
-        case deleteEntity.FRIEND:
-          await this.deleteFriendData(actionData);
+        case deleteEntity.CHANNEL:
+          await this.deleteChannelData(actionData);
           break;
       }
     } catch (error) {
@@ -60,8 +66,20 @@ export class DataCleanupQueueProcessor extends WorkerHost {
       [Op.or]: [{ userId: data.id }, { followingUserId: data.id }],
     });
 
+    await this.friendRequestsService.remove({
+      [Op.or]: [{ userId: data.id }, { followingUserId: data.id }],
+    });
+
+    await this.channelsService.remove({ createdBy: data.id });
+
+    await this.channelMembersService.remove({ userId: data.id });
+
     await this.chatsService.remove({ userId: data.id });
   }
 
-  async deleteFriendData(data: Friend) {}
+  async deleteChannelData(data: Channel) {
+    await this.channelMembersService.remove({ channelId: data.id });
+
+    await this.chatsService.remove({ channelId: data.id });
+  }
 }
