@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/sequelize';
 
 import { queueNames } from 'src/utils/constants';
 import { Friend } from './entities/friend.entity';
-import { setGlobalQueueValue } from 'src/utils/helpers';
 import { CreateFollowerInput } from './dto/follow-user.input';
 
 @Injectable()
@@ -52,11 +51,8 @@ export class FriendsService {
   }
 
   async remove(condition = {}) {
-    await setGlobalQueueValue(this.dataCleanupQueue);
-
     return this.friendModel.destroy({
       where: condition,
-      individualHooks: true,
     });
   }
 }
