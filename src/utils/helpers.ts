@@ -1,6 +1,9 @@
+import { Queue } from 'bullmq';
 import { Logger } from '@nestjs/common';
 import { customAlphabet } from 'nanoid';
 import { get, isEmpty, isNaN, isNil, isNull, isUndefined } from 'lodash';
+
+let queueName: any;
 
 export const isNilOrEmpty = (value: any) =>
   isNil(value) ||
@@ -28,6 +31,17 @@ export const getErrorCodeAndMessage = (
     ),
   };
 };
+
+export const setGlobalQueueValue = async (dataCleanupQueue?: Queue) => {
+  queueName = dataCleanupQueue;
+};
+
+export const getQueueValue = async () => {
+  return queueName;
+};
+
+export const getDataCleanupJobId = (actionName: string, id: string) =>
+  `DATA_CLEANUP_${actionName}_${id}`;
 
 export const generateRandomString = (length: number) => {
   const randomString = customAlphabet(

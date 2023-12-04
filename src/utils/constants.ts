@@ -12,3 +12,12 @@ export const recoveryOption = {
   RESET: 'Reset',
   RECOVER: 'Recover',
 };
+
+export const queueNames = {
+  DATA_CLEANUP_QUEUE: 'DATA_CLEANUP_QUEUE',
+};
+
+export const deleteEntity = {
+  USER: 'USER',
+  CHANNEL: 'CHANNEL',
+};

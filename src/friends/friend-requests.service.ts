@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
-import { FriendRequest } from './entities/freind-request.entity';
+import { FriendRequest } from './entities/friend-request.entity';
 import { CreateFriendRequestInput } from './dto/friend-request.input';
 
 @Injectable()

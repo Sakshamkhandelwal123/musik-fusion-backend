@@ -1,12 +1,16 @@
+import { Queue } from 'bullmq';
 import { genSalt, hash } from 'bcryptjs';
 import { Injectable } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
 import { JwtPayload, decode, sign } from 'jsonwebtoken';
 
 import { applicationConfig } from 'config';
 import { User } from './entities/user.entity';
 import { InjectModel } from '@nestjs/sequelize';
+import { queueNames } from 'src/utils/constants';
 import { SignUpInput } from './dto/signup.input';
 import { generateOtp } from 'src/utils/otp-generator';
+import { setGlobalQueueValue } from 'src/utils/helpers';
 import { UpdateUserInput } from './dto/update-user.input';
 import { generateUsername } from 'src/utils/username-generator';
 import { validatePasswordStrength } from 'src/utils/validation-checks';
@@ -16,6 +20,9 @@ export class UsersService {
   constructor(
     @InjectModel(User)
     private readonly userModel: typeof User,
+
+    @InjectQueue(queueNames.DATA_CLEANUP_QUEUE)
+    private readonly dataCleanupQueue: Queue,
   ) {}
 
   async createUser(signUpInput: SignUpInput, options = {}) {
@@ -68,9 +75,12 @@ export class UsersService {
     });
   }
 
-  remove(condition = {}) {
+  async remove(condition = {}) {
+    await setGlobalQueueValue(this.dataCleanupQueue);
+
     return this.userModel.destroy({
       where: condition,
+      individualHooks: true,
     });
   }
 

@@ -18,6 +18,7 @@
   "dependencies": {
     "@apollo/server": "^4.9.4",
     "@nestjs/apollo": "^12.0.9",
+    "@nestjs/bullmq": "^10.0.1",
     "@nestjs/common": "^10.2.7",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.2.7",
@@ -31,6 +32,7 @@
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
     "buffer-to-stream": "^1.0.0",
+    "bullmq": "^4.14.2",
     "centrifuge": "^5.0.1",
     "check-password-strength": "^2.0.7",
     "class-transformer": "^0.5.1",

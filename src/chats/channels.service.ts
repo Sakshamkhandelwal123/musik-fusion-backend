@@ -1,7 +1,11 @@
+import { Queue } from 'bullmq';
 import { Injectable } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
 import { InjectModel } from '@nestjs/sequelize';
 
+import { queueNames } from 'src/utils/constants';
 import { Channel } from './entities/channel.entity';
+import { setGlobalQueueValue } from 'src/utils/helpers';
 import { UpdateChannelInput } from './dto/update-channel.input';
 import { CreateChannelInput } from './dto/create-channel.input';
 import { ChannelMembersService } from './channel-members.service';
@@ -17,6 +21,9 @@ export class ChannelsService {
     private readonly channelModel: typeof Channel,
 
     private readonly channelMembersService: ChannelMembersService,
+
+    @InjectQueue(queueNames.DATA_CLEANUP_QUEUE)
+    private readonly dataCleanupQueue: Queue,
   ) {}
 
   async create(createChannelInput: CreateChannelInput) {
@@ -64,5 +71,14 @@ export class ChannelsService {
     }
 
     return { channel, member };
+  }
+
+  async remove(condition = {}) {
+    await setGlobalQueueValue(this.dataCleanupQueue);
+
+    return this.channelModel.destroy({
+      where: condition,
+      individualHooks: true,
+    });
   }
 }

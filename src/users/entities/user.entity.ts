@@ -7,7 +7,11 @@ import {
   CreatedAt,
   UpdatedAt,
   DeletedAt,
+  AfterDestroy,
 } from 'sequelize-typescript';
+
+import { deleteEntity } from 'src/utils/constants';
+import { getDataCleanupJobId, getQueueValue } from 'src/utils/helpers';
 
 @Table({
   underscored: true,
@@ -62,4 +66,28 @@ export class User extends Model {
   @Column({ allowNull: true })
   @DeletedAt
   deletedAt: Date;
+
+  @AfterDestroy
+  static async afterDestroyHook(options: any) {
+    const dataCleanupQueue = await getQueueValue();
+
+    const jobId = getDataCleanupJobId(deleteEntity.USER, options.id);
+
+    await dataCleanupQueue.add(
+      jobId,
+      {
+        actionName: deleteEntity.USER,
+        actionData: options,
+      },
+      {
+        attempts: 3,
+        jobId,
+        removeOnComplete: true,
+        backoff: {
+          type: 'exponential',
+          delay: 1000,
+        },
+      },
+    );
+  }
 }

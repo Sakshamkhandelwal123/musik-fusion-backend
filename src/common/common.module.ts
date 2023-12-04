@@ -1,5 +1,7 @@
+import { BullModule } from '@nestjs/bullmq';
 import { Module, Global } from '@nestjs/common';
 
+import { queueNames } from 'src/utils/constants';
 import { UsersModule } from 'src/users/users.module';
 import { ChatsModule } from 'src/chats/chats.module';
 import { DateScalar } from './scalar/date-scaler.service';
@@ -12,7 +14,11 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
 
 @Global()
 @Module({
-  imports: [UsersModule, ChatsModule],
+  imports: [
+    BullModule.registerQueue({ name: queueNames.DATA_CLEANUP_QUEUE }),
+    UsersModule,
+    ChatsModule,
+  ],
   providers: [
     SpotifyService,
     DateScalar,
@@ -23,6 +29,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
   ],
   controllers: [SpotifyController],
   exports: [
+    BullModule,
     SpotifyService,
     DateScalar,
     SendgridService,

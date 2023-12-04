@@ -27,6 +27,7 @@ Made by combining music and fusion, Musikfusion is a web application that gives 
 7. Sequelize
 8. Sendgrid
 9. Cloudinary
+10. BullMq
 
 ## Installation
 
@@ -106,6 +107,13 @@ CLOUDINARY_API_SECRET_KEY= # Cloudinary secret key
 
 ```
 TOKEN_HMAC_SECRET_KEY= # The private key used to sign centrifugo JWT token
+```
+
+### Redis
+
+```
+REDIS_HOST= # The hostname of redis server
+REDIS_PORT= # The port number on which the redis server is listening
 ```
 
 Make sure to replace the placeholder values with your own values before starting the application.
