@@ -70,11 +70,11 @@ export class KafkaService {
   async sendMessage({
     messages,
     topic,
-    eventType,
+    eventName,
   }: {
     messages: Message[];
     topic: string;
-    eventType: string;
+    eventName: string;
   }) {
     await this.kafkaProducer.send({
       topic,
@@ -84,7 +84,7 @@ export class KafkaService {
     });
 
     console.log(
-      `[pushAnalyticsData] push analytics - key: ${eventType}, topic: ${topic}`,
+      `[pushAnalyticsData] push analytics - key: ${eventName}, topic: ${topic}`,
     );
   }
 
@@ -118,17 +118,10 @@ export class KafkaService {
     topic: string;
     messageValue: any;
     partitionKey?: string;
-    creationDate?: any;
+    creationDate?: string;
   }) {
-    const msg = [
-      {
-        key: messageValue.eventType,
-        value: messageValue,
-      },
-    ];
-
     const message = this.prepareKafkaPublishRecord(
-      msg,
+      messageValue,
       partitionKey,
       creationDate,
     );
@@ -136,7 +129,7 @@ export class KafkaService {
     await this.sendMessage({
       topic,
       messages: [message],
-      eventType: messageValue.eventType,
+      eventName: messageValue.eventName,
     });
   }
 }
