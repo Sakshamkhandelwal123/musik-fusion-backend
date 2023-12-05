@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
-import { recoveryOption } from 'src/utils/constants';
+import { entityTypes, eventNames, eventPerformers, kafkaTopics, recoveryOption } from 'src/utils/constants';
 import { generateOtp } from 'src/utils/otp-generator';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyEmailInput } from './dto/verify-email.input';
@@ -45,6 +45,7 @@ import {
   UsernameAlreadyExistsError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
+import { KafkaService } from 'src/common/kafka/kafka.service';
 
 @Resolver('User')
 export class UsersResolver {
@@ -53,6 +54,7 @@ export class UsersResolver {
     private readonly sendgridService: SendgridService,
     private readonly channelsService: ChannelsService,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @Public()
@@ -122,6 +124,20 @@ export class UsersResolver {
         accessToken: jwtToken.token,
         expiresIn: jwtToken.expiresIn,
       };
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.USER_SIGN_IN,
+          entityId: user.id,
+          eventId: user.id,
+          performerId: user.id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: user,
+          eventTimestamp: user.createdAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return response;
     } catch (error) {
