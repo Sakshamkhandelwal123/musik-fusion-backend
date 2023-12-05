@@ -32,3 +32,26 @@ export const kafkaClientId = {
       ? 'mf-events-process'
       : `mf-events-process-${process.env.APP_ENV}`,
 };
+
+export const kafkaTopics = {
+  topic:
+    process.env.APP_ENV === environment.MAIN
+      ? {
+          MUSIK_FUSION_USER_EVENTS: 'musik-fusion-user-events',
+        }
+      : {
+          MUSIK_FUSION_USER_EVENTS: `musik-fusion-user-events-${process.env.APP_ENV}`,
+        },
+};
+
+export const eventPerformers = {
+  USER: 'USER',
+};
+
+export const entityTypes = {
+  USER: 'USER',
+};
+
+export const eventNames = {
+  USER_SIGN_IN: 'USER_SIGN_IN',
+};
