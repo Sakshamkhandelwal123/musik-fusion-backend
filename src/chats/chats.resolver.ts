@@ -33,6 +33,13 @@ import {
   SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
 } from 'src/utils/errors/chat';
+import { KafkaService } from 'src/common/kafka/kafka.service';
+import {
+  entityTypes,
+  eventNames,
+  eventPerformers,
+  kafkaTopics,
+} from 'src/utils/constants';
 
 @Resolver('Chat')
 export class ChatsResolver {
@@ -43,6 +50,7 @@ export class ChatsResolver {
     private readonly channelMembersService: ChannelMembersService,
     private readonly channelsService: ChannelsService,
     private readonly centrifugoService: CentrifugoService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @Mutation('joinChannel')
@@ -104,9 +112,23 @@ export class ChatsResolver {
         })
         .subscribe();
 
-      await this.channelMembersService.create({
+      const channelMember = await this.channelMembersService.create({
         userId: currentUser.id,
         channelId: channel.id,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.CHANNEL_JOINED,
+          entityId: channelMember.id,
+          eventId: channelMember.id,
+          performerId: channelMember.id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: channelMember,
+          eventTimestamp: channelMember.createdAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
       });
 
       return channel;
@@ -172,11 +194,28 @@ export class ChatsResolver {
     @Args('channelId') channelId: string,
   ): Promise<string> {
     try {
-      await this.channelsService.isChannelMember(channelId, currentUser.id);
+      const { member } = await this.channelsService.isChannelMember(
+        channelId,
+        currentUser.id,
+      );
 
       await this.channelMembersService.remove({
         userId: currentUser.id,
         channelId,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.CHANNEL_LEFT,
+          entityId: member.id,
+          eventId: member.id,
+          performerId: member.id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: member,
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
       });
 
       return 'Channel left successfully';

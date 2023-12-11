@@ -16,7 +16,13 @@ import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
-import { entityTypes, eventNames, eventPerformers, kafkaTopics, recoveryOption } from 'src/utils/constants';
+import {
+  entityTypes,
+  eventNames,
+  eventPerformers,
+  kafkaTopics,
+  recoveryOption,
+} from 'src/utils/constants';
 import { generateOtp } from 'src/utils/otp-generator';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyEmailInput } from './dto/verify-email.input';
@@ -74,6 +80,20 @@ export class UsersResolver {
       await this.sendgridService.sendEmail(email, {
         otp: newUser.emailOtp,
         templateName: 'EMAIL_VERIFICATION',
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.USER_SIGN_UP,
+          entityId: newUser.id,
+          eventId: newUser.id,
+          performerId: newUser.id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: newUser,
+          eventTimestamp: newUser.createdAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
       });
 
       return 'We have send a verification email. Please verify your email to continue.';
@@ -366,7 +386,23 @@ export class UsersResolver {
         updateUserPayload.username = updateUserInput.username;
       }
 
-      await this.usersService.update(updateUserPayload, { id: currentUser.id });
+      const updatedUser = await this.usersService.update(updateUserPayload, {
+        id: currentUser.id,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.USER_PROFILE_UPDATED,
+          entityId: updatedUser[1][0].id,
+          eventId: updatedUser[1][0].id,
+          performerId: updatedUser[1][0].id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: updatedUser[1][0],
+          eventTimestamp: updatedUser[1][0].updatedAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'User profile updated successfully';
     } catch (error) {
@@ -394,6 +430,20 @@ export class UsersResolver {
       if (isPresent(user.profileImage)) {
         await this.cloudinaryService.deleteImage(user.profileImage);
       }
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.USER_DELETED,
+          entityId: user.id,
+          eventId: user.id,
+          performerId: user.id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: user,
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'Account deleted successfully';
     } catch (error) {
