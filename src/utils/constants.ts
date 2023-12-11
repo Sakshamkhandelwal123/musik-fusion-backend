@@ -1,7 +1,5 @@
 import 'dotenv/config';
 
-import { applicationConfig } from 'config';
-
 export const environment = {
   DEVELOPMENT: 'development',
   MAIN: 'main',
