@@ -36,9 +36,11 @@ export const kafkaTopics = {
     process.env.APP_ENV === environment.MAIN
       ? {
           MUSIK_FUSION_USER_EVENTS: 'musik-fusion-user-events',
+          MUSIK_FUSION_CHANNEL_EVENTS: 'musik_fusion_channel_events',
         }
       : {
           MUSIK_FUSION_USER_EVENTS: `musik-fusion-user-events-${process.env.APP_ENV}`,
+          MUSIK_FUSION_CHANNEL_EVENTS: `musik_fusion_channel_events-${process.env.APP_ENV}`,
         },
 };
 
@@ -52,4 +54,15 @@ export const entityTypes = {
 
 export const eventNames = {
   USER_SIGN_IN: 'USER_SIGN_IN',
+  USER_SIGN_UP: 'USER_SIGN_UP',
+  USER_PROFILE_UPDATED: 'USER_PROFILE_UPDATED',
+  USER_DELETED: 'USER_DELETED',
+  USER_FOLLOWED: 'USER_FOLLOWED',
+  USER_UNFOLLOWED: 'USER_UNFOLLOWED',
+
+  FRIEND_REQUEST_SENT: 'FRIEND_REQUEST_SENT',
+  FRIEND_REMOVED: 'FRIEND_REMOVED',
+
+  CHANNEL_JOINED: 'CHANNEL_JOINED',
+  CHANNEL_LEFT: 'CHANNEL_LEFT',
 };
