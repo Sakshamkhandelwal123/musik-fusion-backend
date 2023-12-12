@@ -36,7 +36,10 @@
 | withdrawFriendRequest   | :white_check_mark: | friendUserId                               |
 | sendMessage             | :white_check_mark: | channelId, message                         |
 | joinChannel             | :white_check_mark: | friendUserId                               |
+| leaveChannel            | :white_check_mark: | channelId                                  |
 | deleteChat              | :white_check_mark: | chatId                                     |
+| deleteBulkChats         | :white_check_mark: | chatIds                                    |
+| deleteAllChats          | :white_check_mark: | channelId                                  |
 
 ## Rest Apis
 
