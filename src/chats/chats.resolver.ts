@@ -23,6 +23,7 @@ import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { FriendsService } from 'src/friends/friends.service';
 import { CreateMessageInput } from './dto/create-chat.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { KafkaService } from 'src/common/kafka/kafka.service';
 import { ChannelMembersService } from './channel-members.service';
 import { UserAlreadyNotFriendError } from 'src/utils/errors/friend';
 import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
@@ -33,11 +34,10 @@ import {
   SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
 } from 'src/utils/errors/chat';
-import { KafkaService } from 'src/common/kafka/kafka.service';
 import {
-  entityTypes,
-  eventNames,
-  eventPerformers,
+  EntityType,
+  EventName,
+  EventPerformer,
   kafkaTopics,
 } from 'src/utils/constants';
 
@@ -119,12 +119,12 @@ export class ChatsResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.CHANNEL_JOINED,
+          eventName: EventName.CHANNEL_JOINED,
           entityId: channelMember.id,
           eventId: channelMember.id,
           performerId: channelMember.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: channelMember,
           eventTimestamp: channelMember.createdAt,
         },
@@ -206,12 +206,12 @@ export class ChatsResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.CHANNEL_LEFT,
+          eventName: EventName.CHANNEL_LEFT,
           entityId: member.id,
           eventId: member.id,
           performerId: member.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: member,
           eventTimestamp: new Date(),
         },

@@ -17,9 +17,9 @@ import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
 import {
-  entityTypes,
-  eventNames,
-  eventPerformers,
+  EntityType,
+  EventName,
+  EventPerformer,
   kafkaTopics,
   recoveryOption,
 } from 'src/utils/constants';
@@ -84,12 +84,12 @@ export class UsersResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.USER_SIGN_UP,
+          eventName: EventName.USER_SIGN_UP,
           entityId: newUser.id,
           eventId: newUser.id,
           performerId: newUser.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: newUser,
           eventTimestamp: newUser.createdAt,
         },
@@ -147,12 +147,12 @@ export class UsersResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.USER_SIGN_IN,
+          eventName: EventName.USER_SIGN_IN,
           entityId: user.id,
           eventId: user.id,
           performerId: user.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: user,
           eventTimestamp: user.createdAt,
         },
@@ -392,12 +392,12 @@ export class UsersResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.USER_PROFILE_UPDATED,
+          eventName: EventName.USER_PROFILE_UPDATED,
           entityId: updatedUser[1][0].id,
           eventId: updatedUser[1][0].id,
           performerId: updatedUser[1][0].id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: updatedUser[1][0],
           eventTimestamp: updatedUser[1][0].updatedAt,
         },
@@ -433,12 +433,12 @@ export class UsersResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.USER_DELETED,
+          eventName: EventName.USER_DELETED,
           entityId: user.id,
           eventId: user.id,
           performerId: user.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: user,
           eventTimestamp: new Date(),
         },

@@ -18,6 +18,7 @@ import { FollowUserInput } from './dto/follow-user.input';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { UnFollowUserInput } from './dto/unfollow-user.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { KafkaService } from 'src/common/kafka/kafka.service';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
 import { FriendRequestsService } from './friend-requests.service';
 import {
@@ -35,11 +36,10 @@ import {
   UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
-import { KafkaService } from 'src/common/kafka/kafka.service';
 import {
-  entityTypes,
-  eventNames,
-  eventPerformers,
+  EntityType,
+  EventName,
+  EventPerformer,
   kafkaTopics,
 } from 'src/utils/constants';
 
@@ -108,12 +108,12 @@ export class FriendsResolver {
 
         await this.kafkaService.prepareAndSendMessage({
           messageValue: {
-            eventName: eventNames.FRIEND_REQUEST_SENT,
+            eventName: EventName.FRIEND_REQUEST_SENT,
             entityId: friendRequest.id,
             eventId: friendRequest.id,
             performerId: friendRequest.id,
-            entityType: entityTypes.USER,
-            performerType: eventPerformers.USER,
+            entityType: EntityType.USER,
+            performerType: EventPerformer.USER,
             eventJson: friendRequest,
             eventTimestamp: new Date(),
           },
@@ -137,12 +137,12 @@ export class FriendsResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.FRIEND_REMOVED,
+          eventName: EventName.FRIEND_REMOVED,
           entityId: updatedFriend[1][0].id,
           eventId: updatedFriend[1][0].id,
           performerId: updatedFriend[1][0].id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: updatedFriend[1][0],
           eventTimestamp: updatedFriend[1][0].updatedAt,
         },
@@ -178,12 +178,12 @@ export class FriendsResolver {
         if (status === FriendRequestStatus.ACCEPTED) {
           await this.kafkaService.prepareAndSendMessage({
             messageValue: {
-              eventName: eventNames.FRIEND_REQUEST_ACCEPTED,
+              eventName: EventName.FRIEND_REQUEST_ACCEPTED,
               entityId: request.id,
               eventId: request.id,
               performerId: request.id,
-              entityType: entityTypes.USER,
-              performerType: eventPerformers.USER,
+              entityType: EntityType.USER,
+              performerType: EventPerformer.USER,
               eventJson: request,
               eventTimestamp: new Date(),
             },
@@ -192,12 +192,12 @@ export class FriendsResolver {
         } else if (status === FriendRequestStatus.REJECTED) {
           await this.kafkaService.prepareAndSendMessage({
             messageValue: {
-              eventName: eventNames.FRIEND_REQUEST_REJECTED,
+              eventName: EventName.FRIEND_REQUEST_REJECTED,
               entityId: request.id,
               eventId: request.id,
               performerId: request.id,
-              entityType: entityTypes.USER,
-              performerType: eventPerformers.USER,
+              entityType: EntityType.USER,
+              performerType: EventPerformer.USER,
               eventJson: request,
               eventTimestamp: new Date(),
             },
@@ -254,12 +254,12 @@ export class FriendsResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.FRIEND_REQUEST_WITHDRAWN,
+          eventName: EventName.FRIEND_REQUEST_WITHDRAWN,
           entityId: request.id,
           eventId: request.id,
           performerId: request.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: request,
           eventTimestamp: new Date(),
         },
@@ -312,12 +312,12 @@ export class FriendsResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.USER_FOLLOWED,
+          eventName: EventName.USER_FOLLOWED,
           entityId: followedUser.id,
           eventId: followedUser.id,
           performerId: followedUser.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: followedUser,
           eventTimestamp: followedUser.createdAt,
         },
@@ -369,12 +369,12 @@ export class FriendsResolver {
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
-          eventName: eventNames.USER_UNFOLLOWED,
+          eventName: EventName.USER_UNFOLLOWED,
           entityId: follower.id,
           eventId: follower.id,
           performerId: follower.id,
-          entityType: entityTypes.USER,
-          performerType: eventPerformers.USER,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
           eventJson: follower,
           eventTimestamp: new Date(),
         },
