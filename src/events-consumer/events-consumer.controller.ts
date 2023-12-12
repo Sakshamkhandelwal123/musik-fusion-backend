@@ -2,6 +2,7 @@ import * as dayjs from 'dayjs';
 import { Controller, Logger } from '@nestjs/common';
 
 import { KafkaTopic } from 'src/utils/constants';
+import { EventInput } from './dto/create-event.input';
 import { Ctx, KafkaContext } from '@nestjs/microservices';
 import { EventsConsumerService } from './events-consumer.service';
 import { MessageTopic, MessageValue } from 'src/common/kafka/decorators/kafka';
@@ -12,7 +13,7 @@ export class EventsConsumerController {
 
   @MessageTopic(KafkaTopic.MUSIK_FUSION_USER_EVENTS)
   async musikFusionUserEvents(
-    @MessageValue() value: any,
+    @MessageValue() value: EventInput,
     @Ctx() context: KafkaContext,
   ) {
     try {
