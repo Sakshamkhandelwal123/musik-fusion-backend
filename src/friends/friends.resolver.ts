@@ -175,6 +175,36 @@ export class FriendsResolver {
       }
 
       if (request.friendRequestStatus === FriendRequestStatus.PENDING) {
+        if (status === FriendRequestStatus.ACCEPTED) {
+          await this.kafkaService.prepareAndSendMessage({
+            messageValue: {
+              eventName: eventNames.FRIEND_REQUEST_ACCEPTED,
+              entityId: request.id,
+              eventId: request.id,
+              performerId: request.id,
+              entityType: entityTypes.USER,
+              performerType: eventPerformers.USER,
+              eventJson: request,
+              eventTimestamp: new Date(),
+            },
+            topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+          });
+        } else if (status === FriendRequestStatus.REJECTED) {
+          await this.kafkaService.prepareAndSendMessage({
+            messageValue: {
+              eventName: eventNames.FRIEND_REQUEST_REJECTED,
+              entityId: request.id,
+              eventId: request.id,
+              performerId: request.id,
+              entityType: entityTypes.USER,
+              performerType: eventPerformers.USER,
+              eventJson: request,
+              eventTimestamp: new Date(),
+            },
+            topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+          });
+        }
+
         await this.friendRequestsService.update(
           { friendRequestStatus: status },
           { userId: friendUserId, followingUserId: currentUser.id },
@@ -220,6 +250,20 @@ export class FriendsResolver {
       await this.friendRequestsService.remove({
         userId: currentUser.id,
         followingUserId: friendUserId,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: eventNames.FRIEND_REQUEST_WITHDRAWN,
+          entityId: request.id,
+          eventId: request.id,
+          performerId: request.id,
+          entityType: entityTypes.USER,
+          performerType: eventPerformers.USER,
+          eventJson: request,
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
       });
 
       return `Friend request withdrawn`;
