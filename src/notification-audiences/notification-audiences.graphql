@@ -1,0 +1,24 @@
+type NotificationAudience {
+  # Example field (placeholder)
+  exampleField: Int
+}
+
+input CreateNotificationAudienceInput {
+  # Example field (placeholder)
+  exampleField: Int
+}
+
+input UpdateNotificationAudienceInput {
+  id: Int!
+}
+
+type Query {
+  notificationAudiences: [NotificationAudience]!
+  notificationAudience(id: Int!): NotificationAudience
+}
+
+type Mutation {
+  createNotificationAudience(createNotificationAudienceInput: CreateNotificationAudienceInput!): NotificationAudience!
+  updateNotificationAudience(updateNotificationAudienceInput: UpdateNotificationAudienceInput!): NotificationAudience!
+  removeNotificationAudience(id: Int!): NotificationAudience
+}
