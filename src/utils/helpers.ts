@@ -3,6 +3,8 @@ import { Logger } from '@nestjs/common';
 import { customAlphabet } from 'nanoid';
 import { get, isEmpty, isNaN, isNil, isNull, isUndefined } from 'lodash';
 
+import { EventName } from './constants';
+
 let queueName: any;
 
 export const isNilOrEmpty = (value: any) =>
@@ -51,3 +53,10 @@ export const generateRandomString = (length: number) => {
 
   return randomString;
 };
+
+export const isNotificationValid = (notificationType: EventName) =>
+  [
+    EventName.FRIEND_REQUEST_ACCEPTED,
+    EventName.FRIEND_REQUEST_REJECTED,
+    EventName.USER_FOLLOWED,
+  ].includes(notificationType);
