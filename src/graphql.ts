@@ -37,6 +37,22 @@ export interface UnFollowUserInput {
     followingUserId: string;
 }
 
+export interface CreateNotificationAudienceInput {
+    exampleField?: Nullable<number>;
+}
+
+export interface UpdateNotificationAudienceInput {
+    id: number;
+}
+
+export interface CreateNotificationInput {
+    exampleField?: Nullable<number>;
+}
+
+export interface UpdateNotificationInput {
+    id: number;
+}
+
 export interface SignInInput {
     email: string;
     password: string;
@@ -100,6 +116,10 @@ export interface IQuery {
     getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
     getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
     getUserFollowing(username: string): UserFollowingResponse | Promise<UserFollowingResponse>;
+    notificationAudiences(): Nullable<NotificationAudience>[] | Promise<Nullable<NotificationAudience>[]>;
+    notificationAudience(id: number): Nullable<NotificationAudience> | Promise<Nullable<NotificationAudience>>;
+    notifications(): Nullable<Notification>[] | Promise<Nullable<Notification>[]>;
+    notification(id: number): Nullable<Notification> | Promise<Nullable<Notification>>;
     me(): User | Promise<User>;
     getUserByUsername(username: string): User | Promise<User>;
 }
@@ -116,6 +136,12 @@ export interface IMutation {
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
     friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
     handleFriendRequest(friendUserId: string, status: FriendRequestStatus): string | Promise<string>;
+    createNotificationAudience(createNotificationAudienceInput: CreateNotificationAudienceInput): NotificationAudience | Promise<NotificationAudience>;
+    updateNotificationAudience(updateNotificationAudienceInput: UpdateNotificationAudienceInput): NotificationAudience | Promise<NotificationAudience>;
+    removeNotificationAudience(id: number): Nullable<NotificationAudience> | Promise<Nullable<NotificationAudience>>;
+    createNotification(createNotificationInput: CreateNotificationInput): Notification | Promise<Notification>;
+    updateNotification(updateNotificationInput: UpdateNotificationInput): Notification | Promise<Notification>;
+    removeNotification(id: number): Nullable<Notification> | Promise<Nullable<Notification>>;
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
@@ -163,6 +189,14 @@ export interface UserFollowingResponse {
 export interface UserFollowerResponse {
     total: number;
     followers: Friend[];
+}
+
+export interface NotificationAudience {
+    exampleField?: Nullable<number>;
+}
+
+export interface Notification {
+    exampleField?: Nullable<number>;
 }
 
 export interface User {
