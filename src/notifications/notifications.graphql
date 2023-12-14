@@ -1,0 +1,24 @@
+type Notification {
+  # Example field (placeholder)
+  exampleField: Int
+}
+
+input CreateNotificationInput {
+  # Example field (placeholder)
+  exampleField: Int
+}
+
+input UpdateNotificationInput {
+  id: Int!
+}
+
+type Query {
+  notifications: [Notification]!
+  notification(id: Int!): Notification
+}
+
+type Mutation {
+  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
+  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
+  removeNotification(id: Int!): Notification
+}
