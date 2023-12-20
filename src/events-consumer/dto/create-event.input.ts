@@ -17,7 +17,6 @@ export class EventInput {
   performerId?: string;
   performerType?: EventPerformer;
   entityId?: string;
-  eventId?: string;
   entityType?: string;
   referenceId?: string;
   referenceType?: string;

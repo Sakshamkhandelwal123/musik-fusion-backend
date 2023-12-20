@@ -120,10 +120,9 @@ export class ChatsResolver {
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.CHANNEL_JOINED,
-          entityId: channelMember.id,
-          eventId: channelMember.id,
+          entityId: channel.id,
           performerId: channelMember.id,
-          entityType: EntityType.USER,
+          entityType: EntityType.CHANNEL,
           performerType: EventPerformer.USER,
           eventJson: channelMember,
           eventTimestamp: channelMember.createdAt,
@@ -208,7 +207,6 @@ export class ChatsResolver {
         messageValue: {
           eventName: EventName.CHANNEL_LEFT,
           entityId: member.id,
-          eventId: member.id,
           performerId: member.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,

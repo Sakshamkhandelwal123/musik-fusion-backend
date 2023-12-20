@@ -110,7 +110,6 @@ export class FriendsResolver {
           messageValue: {
             eventName: EventName.FRIEND_REQUEST_SENT,
             entityId: friendRequest.id,
-            eventId: friendRequest.id,
             performerId: friendRequest.id,
             entityType: EntityType.USER,
             performerType: EventPerformer.USER,
@@ -139,7 +138,6 @@ export class FriendsResolver {
         messageValue: {
           eventName: EventName.FRIEND_REMOVED,
           entityId: updatedFriend[1][0].id,
-          eventId: updatedFriend[1][0].id,
           performerId: updatedFriend[1][0].id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
@@ -180,7 +178,6 @@ export class FriendsResolver {
             messageValue: {
               eventName: EventName.FRIEND_REQUEST_ACCEPTED,
               entityId: request.id,
-              eventId: request.id,
               performerId: request.id,
               entityType: EntityType.USER,
               performerType: EventPerformer.USER,
@@ -194,7 +191,6 @@ export class FriendsResolver {
             messageValue: {
               eventName: EventName.FRIEND_REQUEST_REJECTED,
               entityId: request.id,
-              eventId: request.id,
               performerId: request.id,
               entityType: EntityType.USER,
               performerType: EventPerformer.USER,
@@ -256,7 +252,6 @@ export class FriendsResolver {
         messageValue: {
           eventName: EventName.FRIEND_REQUEST_WITHDRAWN,
           entityId: request.id,
-          eventId: request.id,
           performerId: request.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
@@ -314,7 +309,6 @@ export class FriendsResolver {
         messageValue: {
           eventName: EventName.USER_FOLLOWED,
           entityId: followedUser.id,
-          eventId: followedUser.id,
           performerId: followedUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
@@ -371,7 +365,6 @@ export class FriendsResolver {
         messageValue: {
           eventName: EventName.USER_UNFOLLOWED,
           entityId: follower.id,
-          eventId: follower.id,
           performerId: follower.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,

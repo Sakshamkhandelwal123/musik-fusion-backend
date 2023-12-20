@@ -86,7 +86,6 @@ export class UsersResolver {
         messageValue: {
           eventName: EventName.USER_SIGN_UP,
           entityId: newUser.id,
-          eventId: newUser.id,
           performerId: newUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
@@ -149,7 +148,6 @@ export class UsersResolver {
         messageValue: {
           eventName: EventName.USER_SIGN_IN,
           entityId: user.id,
-          eventId: user.id,
           performerId: user.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
@@ -291,9 +289,22 @@ export class UsersResolver {
       });
 
       if (!channel) {
-        await this.channelsService.create({
+        const newChannel = await this.channelsService.create({
           name: user.id,
           createdBy: user.id,
+        });
+
+        await this.kafkaService.prepareAndSendMessage({
+          messageValue: {
+            eventName: EventName.CHANNEL_CREATED,
+            entityId: newChannel.id,
+            performerId: user.id,
+            entityType: EntityType.CHANNEL,
+            performerType: EventPerformer.USER,
+            eventJson: newChannel,
+            eventTimestamp: newChannel.createdAt,
+          },
+          topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
         });
       }
 
@@ -394,7 +405,6 @@ export class UsersResolver {
         messageValue: {
           eventName: EventName.USER_PROFILE_UPDATED,
           entityId: updatedUser[1][0].id,
-          eventId: updatedUser[1][0].id,
           performerId: updatedUser[1][0].id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
@@ -435,7 +445,6 @@ export class UsersResolver {
         messageValue: {
           eventName: EventName.USER_DELETED,
           entityId: user.id,
-          eventId: user.id,
           performerId: user.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
