@@ -13,6 +13,6 @@
 | FRIEND_REQUEST_WITHDRAWN |   User Id    |      User      |                  |
 | FRIEND_REQUEST_ACCEPTED  |   User Id    |      User      |                  |
 | FRIEND_REQUEST_REJECTED  |   User Id    |      User      |                  |
-| CHANNEL_CREATED          |
-| CHANNEL_JOINED           |
-| CHANNEL_LEFT             |
+| CHANNEL_CREATED          |   User Id    |      User      | Channel Id       |   Channel   |     null     |      null      |  Created At  |    Channel Details     |
+| CHANNEL_JOINED           |   User Id    |      User      | Channel Id       |   Channel   |     null     |      null      |  Created At  | Channel Member Details |
+| CHANNEL_LEFT             |   User Id    |      User      | Channel Id       |   Channel   |     null     |      null      | Current Time | Channel Member Details |
