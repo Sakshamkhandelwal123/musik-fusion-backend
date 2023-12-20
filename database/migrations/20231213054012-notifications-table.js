@@ -133,8 +133,8 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('notifications');
-    await queryInterface.dropTable('notification_audiences');
     await queryInterface.dropTable('notification_meta');
+    await queryInterface.dropTable('notification_audiences');
+    await queryInterface.dropTable('notifications');
   },
 };
