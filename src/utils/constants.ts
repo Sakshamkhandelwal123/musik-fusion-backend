@@ -63,6 +63,7 @@ export enum EventPerformer {
 
 export enum EntityType {
   USER = 'USER',
+  CHANNEL = 'CHANNEL',
 }
 
 export enum EventName {
@@ -79,6 +80,7 @@ export enum EventName {
   FRIEND_REQUEST_ACCEPTED = 'FRIEND_REQUEST_ACCEPTED',
   FRIEND_REQUEST_REJECTED = 'FRIEND_REQUEST_REJECTED',
 
+  CHANNEL_CREATED = 'CHANNEL_CREATED',
   CHANNEL_JOINED = 'CHANNEL_JOINED',
   CHANNEL_LEFT = 'CHANNEL_LEFT',
 }
