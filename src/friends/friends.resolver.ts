@@ -320,7 +320,7 @@ export class FriendsResolver {
           performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
-          eventJson: { user: currentUser, followUser, newFollowedUser },
+          eventJson: { user: currentUser, followUser },
           eventTimestamp: newFollowedUser.createdAt,
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
