@@ -10,9 +10,9 @@
 | USER_UNFOLLOWED          |   User Id    |      User      | Followed User Id |    User     |     null     |      null      | Current Time |     Friend Details     |
 | FRIEND_REQUEST_SENT      |   User Id    |      User      | Friend Id        |    User     |     null     |      null      |  Created At  | Friend Request Details |
 | FRIEND_REMOVED           |   User Id    |      User      | Friend Id        |    User     |     null     |      null      | Current Time | Friend Request Details |
-| FRIEND_REQUEST_WITHDRAWN |   User Id    |      User      |                  |
-| FRIEND_REQUEST_ACCEPTED  |   User Id    |      User      |                  |
-| FRIEND_REQUEST_REJECTED  |   User Id    |      User      |                  |
+| FRIEND_REQUEST_WITHDRAWN |   User Id    |      User      | Friend Id        |    User     |     null     |      null      | Current Time | Friend Request Details |
+| FRIEND_REQUEST_ACCEPTED  |   User Id    |      User      | Friend Id        |    User     |     null     |      null      | Current Time | Friend Request Details |
+| FRIEND_REQUEST_REJECTED  |   User Id    |      User      | Friend Id        |    User     |     null     |      null      | Current Time | Friend Request Details |
 | CHANNEL_CREATED          |   User Id    |      User      | Channel Id       |   Channel   |     null     |      null      |  Created At  |    Channel Details     |
 | CHANNEL_JOINED           |   User Id    |      User      | Channel Id       |   Channel   |     null     |      null      |  Created At  | Channel Member Details |
 | CHANNEL_LEFT             |   User Id    |      User      | Channel Id       |   Channel   |     null     |      null      | Current Time | Channel Member Details |
