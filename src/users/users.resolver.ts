@@ -152,7 +152,7 @@ export class UsersResolver {
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
           eventJson: user,
-          eventTimestamp: user.createdAt,
+          eventTimestamp: new Date(),
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
       });
@@ -404,8 +404,8 @@ export class UsersResolver {
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.USER_PROFILE_UPDATED,
-          entityId: updatedUser[1][0].id,
-          performerId: updatedUser[1][0].id,
+          entityId: currentUser.id,
+          performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
           eventJson: updatedUser[1][0],
@@ -444,8 +444,8 @@ export class UsersResolver {
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.USER_DELETED,
-          entityId: user.id,
-          performerId: user.id,
+          entityId: currentUser.id,
+          performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
           eventJson: user,

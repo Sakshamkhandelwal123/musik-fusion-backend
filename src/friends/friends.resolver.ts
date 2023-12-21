@@ -109,12 +109,12 @@ export class FriendsResolver {
         await this.kafkaService.prepareAndSendMessage({
           messageValue: {
             eventName: EventName.FRIEND_REQUEST_SENT,
-            entityId: friendRequest.id,
-            performerId: friendRequest.id,
+            entityId: friendUnfriendInput.followingUserId,
+            performerId: currentUser.id,
             entityType: EntityType.USER,
             performerType: EventPerformer.USER,
-            eventJson: friendRequest,
-            eventTimestamp: new Date(),
+            eventJson: { user: currentUser, friendUser, friendRequest },
+            eventTimestamp: friendRequest.createdAt,
           },
           topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
         });
@@ -137,11 +137,11 @@ export class FriendsResolver {
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.FRIEND_REMOVED,
-          entityId: updatedFriend[1][0].id,
-          performerId: updatedFriend[1][0].id,
+          entityId: friendUnfriendInput.followingUserId,
+          performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
-          eventJson: updatedFriend[1][0],
+          eventJson: { user: currentUser, friendUser },
           eventTimestamp: updatedFriend[1][0].updatedAt,
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
@@ -173,16 +173,25 @@ export class FriendsResolver {
       }
 
       if (request.friendRequestStatus === FriendRequestStatus.PENDING) {
+        const updatedRequest = await this.friendRequestsService.update(
+          { friendRequestStatus: status },
+          { userId: friendUserId, followingUserId: currentUser.id },
+        );
+
+        const friendUser = await this.usersService.findOne({
+          id: friendUserId,
+        });
+
         if (status === FriendRequestStatus.ACCEPTED) {
           await this.kafkaService.prepareAndSendMessage({
             messageValue: {
               eventName: EventName.FRIEND_REQUEST_ACCEPTED,
-              entityId: request.id,
-              performerId: request.id,
+              entityId: friendUserId,
+              performerId: currentUser.id,
               entityType: EntityType.USER,
               performerType: EventPerformer.USER,
-              eventJson: request,
-              eventTimestamp: new Date(),
+              eventJson: { user: currentUser, friendUser },
+              eventTimestamp: updatedRequest[1][0].updatedAt,
             },
             topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
           });
@@ -190,21 +199,16 @@ export class FriendsResolver {
           await this.kafkaService.prepareAndSendMessage({
             messageValue: {
               eventName: EventName.FRIEND_REQUEST_REJECTED,
-              entityId: request.id,
-              performerId: request.id,
+              entityId: friendUserId,
+              performerId: currentUser.id,
               entityType: EntityType.USER,
               performerType: EventPerformer.USER,
-              eventJson: request,
-              eventTimestamp: new Date(),
+              eventJson: { user: currentUser, friendUser },
+              eventTimestamp: updatedRequest[1][0].updatedAt,
             },
             topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
           });
         }
-
-        await this.friendRequestsService.update(
-          { friendRequestStatus: status },
-          { userId: friendUserId, followingUserId: currentUser.id },
-        );
       }
 
       if (status === FriendRequestStatus.ACCEPTED) {
@@ -248,14 +252,18 @@ export class FriendsResolver {
         followingUserId: friendUserId,
       });
 
+      const friendUser = await this.usersService.findOne({
+        id: friendUserId,
+      });
+
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.FRIEND_REQUEST_WITHDRAWN,
-          entityId: request.id,
-          performerId: request.id,
+          entityId: friendUserId,
+          performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
-          eventJson: request,
+          eventJson: { user: currentUser, friendUser, request },
           eventTimestamp: new Date(),
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
@@ -302,18 +310,18 @@ export class FriendsResolver {
         ...followUserInput,
       };
 
-      const followedUser =
+      const newFollowedUser =
         await this.friendsService.create(createFollowerInput);
 
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.USER_FOLLOWED,
-          entityId: followedUser.id,
-          performerId: followedUser.id,
+          entityId: followUserInput.followingUserId,
+          performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
-          eventJson: followedUser,
-          eventTimestamp: followedUser.createdAt,
+          eventJson: { user: currentUser, followUser, newFollowedUser },
+          eventTimestamp: newFollowedUser.createdAt,
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
       });
@@ -364,11 +372,11 @@ export class FriendsResolver {
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.USER_UNFOLLOWED,
-          entityId: follower.id,
-          performerId: follower.id,
+          entityId: unFollowUserInput.followingUserId,
+          performerId: currentUser.id,
           entityType: EntityType.USER,
           performerType: EventPerformer.USER,
-          eventJson: follower,
+          eventJson: { user: currentUser, unfollowUser },
           eventTimestamp: new Date(),
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,

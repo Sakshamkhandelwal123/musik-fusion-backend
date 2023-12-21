@@ -121,10 +121,10 @@ export class ChatsResolver {
         messageValue: {
           eventName: EventName.CHANNEL_JOINED,
           entityId: channel.id,
-          performerId: channelMember.id,
+          performerId: currentUser.id,
           entityType: EntityType.CHANNEL,
           performerType: EventPerformer.USER,
-          eventJson: channelMember,
+          eventJson: { channel, channelMember },
           eventTimestamp: channelMember.createdAt,
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
@@ -193,7 +193,7 @@ export class ChatsResolver {
     @Args('channelId') channelId: string,
   ): Promise<string> {
     try {
-      const { member } = await this.channelsService.isChannelMember(
+      const { channel, member } = await this.channelsService.isChannelMember(
         channelId,
         currentUser.id,
       );
@@ -206,11 +206,11 @@ export class ChatsResolver {
       await this.kafkaService.prepareAndSendMessage({
         messageValue: {
           eventName: EventName.CHANNEL_LEFT,
-          entityId: member.id,
-          performerId: member.id,
-          entityType: EntityType.USER,
+          entityId: channelId,
+          performerId: currentUser.id,
+          entityType: EntityType.CHANNEL,
           performerType: EventPerformer.USER,
-          eventJson: member,
+          eventJson: { channel, member },
           eventTimestamp: new Date(),
         },
         topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
