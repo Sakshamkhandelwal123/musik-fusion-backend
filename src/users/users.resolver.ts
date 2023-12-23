@@ -16,7 +16,13 @@ import { UsersService } from './users.service';
 import { SignInInput } from './dto/signin.input';
 import { SignUpInput } from './dto/signup.input';
 import { Public } from 'src/auth/decorators/public';
-import { recoveryOption } from 'src/utils/constants';
+import {
+  EntityType,
+  EventName,
+  EventPerformer,
+  kafkaTopics,
+  recoveryOption,
+} from 'src/utils/constants';
 import { generateOtp } from 'src/utils/otp-generator';
 import { UpdateUserInput } from './dto/update-user.input';
 import { VerifyEmailInput } from './dto/verify-email.input';
@@ -45,6 +51,7 @@ import {
   UsernameAlreadyExistsError,
   WrongPasswordError,
 } from 'src/utils/errors/user';
+import { KafkaService } from 'src/common/kafka/kafka.service';
 
 @Resolver('User')
 export class UsersResolver {
@@ -53,6 +60,7 @@ export class UsersResolver {
     private readonly sendgridService: SendgridService,
     private readonly channelsService: ChannelsService,
     private readonly cloudinaryService: CloudinaryService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @Public()
@@ -72,6 +80,19 @@ export class UsersResolver {
       await this.sendgridService.sendEmail(email, {
         otp: newUser.emailOtp,
         templateName: 'EMAIL_VERIFICATION',
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.USER_SIGN_UP,
+          entityId: newUser.id,
+          performerId: newUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: newUser,
+          eventTimestamp: newUser.createdAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
       });
 
       return 'We have send a verification email. Please verify your email to continue.';
@@ -122,6 +143,19 @@ export class UsersResolver {
         accessToken: jwtToken.token,
         expiresIn: jwtToken.expiresIn,
       };
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.USER_SIGN_IN,
+          entityId: user.id,
+          performerId: user.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: user,
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return response;
     } catch (error) {
@@ -255,9 +289,22 @@ export class UsersResolver {
       });
 
       if (!channel) {
-        await this.channelsService.create({
+        const newChannel = await this.channelsService.create({
           name: user.id,
           createdBy: user.id,
+        });
+
+        await this.kafkaService.prepareAndSendMessage({
+          messageValue: {
+            eventName: EventName.CHANNEL_CREATED,
+            entityId: newChannel.id,
+            performerId: user.id,
+            entityType: EntityType.CHANNEL,
+            performerType: EventPerformer.USER,
+            eventJson: newChannel,
+            eventTimestamp: newChannel.createdAt,
+          },
+          topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
         });
       }
 
@@ -350,7 +397,22 @@ export class UsersResolver {
         updateUserPayload.username = updateUserInput.username;
       }
 
-      await this.usersService.update(updateUserPayload, { id: currentUser.id });
+      const updatedUser = await this.usersService.update(updateUserPayload, {
+        id: currentUser.id,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.USER_PROFILE_UPDATED,
+          entityId: currentUser.id,
+          performerId: currentUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: updatedUser[1][0],
+          eventTimestamp: updatedUser[1][0].updatedAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'User profile updated successfully';
     } catch (error) {
@@ -378,6 +440,19 @@ export class UsersResolver {
       if (isPresent(user.profileImage)) {
         await this.cloudinaryService.deleteImage(user.profileImage);
       }
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.USER_DELETED,
+          entityId: currentUser.id,
+          performerId: currentUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: user,
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'Account deleted successfully';
     } catch (error) {

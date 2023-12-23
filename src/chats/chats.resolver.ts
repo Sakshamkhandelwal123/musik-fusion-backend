@@ -23,6 +23,7 @@ import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { FriendsService } from 'src/friends/friends.service';
 import { CreateMessageInput } from './dto/create-chat.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { KafkaService } from 'src/common/kafka/kafka.service';
 import { ChannelMembersService } from './channel-members.service';
 import { UserAlreadyNotFriendError } from 'src/utils/errors/friend';
 import { CentrifugoService } from 'src/common/centrifugo/centrifugo.service';
@@ -33,6 +34,12 @@ import {
   SelfChannelNotAllowedError,
   UserAlreadyMemberOfChannelError,
 } from 'src/utils/errors/chat';
+import {
+  EntityType,
+  EventName,
+  EventPerformer,
+  kafkaTopics,
+} from 'src/utils/constants';
 
 @Resolver('Chat')
 export class ChatsResolver {
@@ -43,6 +50,7 @@ export class ChatsResolver {
     private readonly channelMembersService: ChannelMembersService,
     private readonly channelsService: ChannelsService,
     private readonly centrifugoService: CentrifugoService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @Mutation('joinChannel')
@@ -104,9 +112,22 @@ export class ChatsResolver {
         })
         .subscribe();
 
-      await this.channelMembersService.create({
+      const channelMember = await this.channelMembersService.create({
         userId: currentUser.id,
         channelId: channel.id,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.CHANNEL_JOINED,
+          entityId: channel.id,
+          performerId: currentUser.id,
+          entityType: EntityType.CHANNEL,
+          performerType: EventPerformer.USER,
+          eventJson: { channel, channelMember },
+          eventTimestamp: channelMember.createdAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
       });
 
       return channel;
@@ -172,11 +193,27 @@ export class ChatsResolver {
     @Args('channelId') channelId: string,
   ): Promise<string> {
     try {
-      await this.channelsService.isChannelMember(channelId, currentUser.id);
+      const { channel, member } = await this.channelsService.isChannelMember(
+        channelId,
+        currentUser.id,
+      );
 
       await this.channelMembersService.remove({
         userId: currentUser.id,
         channelId,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.CHANNEL_LEFT,
+          entityId: channelId,
+          performerId: currentUser.id,
+          entityType: EntityType.CHANNEL,
+          performerType: EventPerformer.USER,
+          eventJson: { channel, member },
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_CHANNEL_EVENTS,
       });
 
       return 'Channel left successfully';

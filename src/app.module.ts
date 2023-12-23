@@ -20,6 +20,9 @@ import { AuthGuard } from './auth/guards/auth.guard';
 import { QueuesModule } from './queues/queues.module';
 import { CommonModule } from './common/common.module';
 import { FriendsModule } from './friends/friends.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { EventsConsumerModule } from './events-consumer/events-consumer.module';
+import { NotificationAudiencesModule } from './notification-audiences/notification-audiences.module';
 
 @Module({
   imports: [
@@ -76,6 +79,9 @@ import { FriendsModule } from './friends/friends.module';
     ChatsModule,
     FriendsModule,
     QueuesModule,
+    EventsConsumerModule,
+    NotificationsModule,
+    NotificationAudiencesModule,
   ],
   providers: [
     AppService,

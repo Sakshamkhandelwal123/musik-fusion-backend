@@ -18,6 +18,7 @@ import { FollowUserInput } from './dto/follow-user.input';
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { UnFollowUserInput } from './dto/unfollow-user.input';
 import { CurrentUser } from 'src/auth/decorators/currentUser';
+import { KafkaService } from 'src/common/kafka/kafka.service';
 import { FriendUnfriendInput } from './dto/friend-unfriend.input';
 import { FriendRequestsService } from './friend-requests.service';
 import {
@@ -35,6 +36,12 @@ import {
   UserAlreadyNotFriendError,
   UserAlreadyUnFollowedError,
 } from 'src/utils/errors/friend';
+import {
+  EntityType,
+  EventName,
+  EventPerformer,
+  kafkaTopics,
+} from 'src/utils/constants';
 
 @Resolver('Friend')
 export class FriendsResolver {
@@ -42,6 +49,7 @@ export class FriendsResolver {
     private readonly usersService: UsersService,
     private readonly friendsService: FriendsService,
     private readonly friendRequestsService: FriendRequestsService,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @Mutation('friendUnfriendAUser')
@@ -93,9 +101,22 @@ export class FriendsResolver {
           });
         }
 
-        await this.friendRequestsService.create({
+        const friendRequest = await this.friendRequestsService.create({
           userId: currentUser.id,
           followingUserId: friendUnfriendInput.followingUserId,
+        });
+
+        await this.kafkaService.prepareAndSendMessage({
+          messageValue: {
+            eventName: EventName.FRIEND_REQUEST_SENT,
+            entityId: friendUnfriendInput.followingUserId,
+            performerId: currentUser.id,
+            entityType: EntityType.USER,
+            performerType: EventPerformer.USER,
+            eventJson: { user: currentUser, friendUser, friendRequest },
+            eventTimestamp: friendRequest.createdAt,
+          },
+          topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
         });
 
         return 'Friend request sent';
@@ -105,13 +126,26 @@ export class FriendsResolver {
         throw new UserAlreadyNotFriendError();
       }
 
-      await this.friendsService.update(
+      const updatedFriend = await this.friendsService.update(
         { isFriend: false },
         {
           userId: currentUser.id,
           followingUserId: friendUnfriendInput.followingUserId,
         },
       );
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.FRIEND_REMOVED,
+          entityId: friendUnfriendInput.followingUserId,
+          performerId: currentUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: { user: currentUser, friendUser },
+          eventTimestamp: updatedFriend[1][0].updatedAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'Friend removed';
     } catch (error) {
@@ -139,10 +173,42 @@ export class FriendsResolver {
       }
 
       if (request.friendRequestStatus === FriendRequestStatus.PENDING) {
-        await this.friendRequestsService.update(
+        const updatedRequest = await this.friendRequestsService.update(
           { friendRequestStatus: status },
           { userId: friendUserId, followingUserId: currentUser.id },
         );
+
+        const friendUser = await this.usersService.findOne({
+          id: friendUserId,
+        });
+
+        if (status === FriendRequestStatus.ACCEPTED) {
+          await this.kafkaService.prepareAndSendMessage({
+            messageValue: {
+              eventName: EventName.FRIEND_REQUEST_ACCEPTED,
+              entityId: friendUserId,
+              performerId: currentUser.id,
+              entityType: EntityType.USER,
+              performerType: EventPerformer.USER,
+              eventJson: { user: currentUser, friendUser },
+              eventTimestamp: updatedRequest[1][0].updatedAt,
+            },
+            topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+          });
+        } else if (status === FriendRequestStatus.REJECTED) {
+          await this.kafkaService.prepareAndSendMessage({
+            messageValue: {
+              eventName: EventName.FRIEND_REQUEST_REJECTED,
+              entityId: friendUserId,
+              performerId: currentUser.id,
+              entityType: EntityType.USER,
+              performerType: EventPerformer.USER,
+              eventJson: { user: currentUser, friendUser },
+              eventTimestamp: updatedRequest[1][0].updatedAt,
+            },
+            topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+          });
+        }
       }
 
       if (status === FriendRequestStatus.ACCEPTED) {
@@ -186,6 +252,23 @@ export class FriendsResolver {
         followingUserId: friendUserId,
       });
 
+      const friendUser = await this.usersService.findOne({
+        id: friendUserId,
+      });
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.FRIEND_REQUEST_WITHDRAWN,
+          entityId: friendUserId,
+          performerId: currentUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: { user: currentUser, friendUser, request },
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
+
       return `Friend request withdrawn`;
     } catch (error) {
       throw new HttpException(
@@ -227,7 +310,21 @@ export class FriendsResolver {
         ...followUserInput,
       };
 
-      await this.friendsService.create(createFollowerInput);
+      const newFollowedUser =
+        await this.friendsService.create(createFollowerInput);
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.USER_FOLLOWED,
+          entityId: followUserInput.followingUserId,
+          performerId: currentUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: { user: currentUser, followUser },
+          eventTimestamp: newFollowedUser.createdAt,
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'User followed successfully';
     } catch (error) {
@@ -271,6 +368,19 @@ export class FriendsResolver {
       };
 
       await this.friendsService.remove(removeFollowerInput);
+
+      await this.kafkaService.prepareAndSendMessage({
+        messageValue: {
+          eventName: EventName.USER_UNFOLLOWED,
+          entityId: unFollowUserInput.followingUserId,
+          performerId: currentUser.id,
+          entityType: EntityType.USER,
+          performerType: EventPerformer.USER,
+          eventJson: { user: currentUser, unfollowUser },
+          eventTimestamp: new Date(),
+        },
+        topic: kafkaTopics.topic.MUSIK_FUSION_USER_EVENTS,
+      });
 
       return 'User unfollowed successfully';
     } catch (error) {

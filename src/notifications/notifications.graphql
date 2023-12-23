@@ -1,0 +1,39 @@
+scalar Date
+
+type Notification {
+  id: Int!
+  userId: String!
+  isRead: Boolean!
+  notificationType: String!
+  entityId: String!
+  entityType: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type NotificationMeta {
+  id: Int!
+  notificationId: Int!
+  entityId: String!
+  entityType: String!
+  referenceId: String
+  referenceType: String
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+input GetNotificationsInput {
+  limit: Int!
+  offset: Int!
+  userId: Int!
+}
+
+type Query {
+  getNotificationData(getNotificationsInput: GetNotificationsInput!): [Notification!]!
+  getUnreadNotificationCount(userId: String!): Int!
+  getNotificationMetadata(notificationId: String!): [NotificationMeta!]!
+}
+
+type Mutation {
+  markNotificationRead(userId: String!): String!
+}

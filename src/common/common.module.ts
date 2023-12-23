@@ -4,6 +4,7 @@ import { Module, Global } from '@nestjs/common';
 import { queueNames } from 'src/utils/constants';
 import { UsersModule } from 'src/users/users.module';
 import { ChatsModule } from 'src/chats/chats.module';
+import { KafkaService } from './kafka/kafka.service';
 import { DateScalar } from './scalar/date-scaler.service';
 import { SpotifyService } from './spotify/spotify.service';
 import { SendgridService } from './sendgrid/sendgrid.service';
@@ -26,6 +27,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
     CloudinaryConfiguration,
     CloudinaryService,
     CentrifugoService,
+    KafkaService,
   ],
   controllers: [SpotifyController],
   exports: [
@@ -36,6 +38,7 @@ import { CloudinaryConfiguration } from './cloudinary/cloudinary.configuration';
     CloudinaryConfiguration,
     CloudinaryService,
     CentrifugoService,
+    KafkaService,
   ],
 })
 export class CommonModule {}

@@ -37,6 +37,12 @@ export interface UnFollowUserInput {
     followingUserId: string;
 }
 
+export interface GetNotificationsInput {
+    limit: number;
+    offset: number;
+    userId: number;
+}
+
 export interface SignInInput {
     email: string;
     password: string;
@@ -100,6 +106,11 @@ export interface IQuery {
     getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
     getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
     getUserFollowing(username: string): UserFollowingResponse | Promise<UserFollowingResponse>;
+    notificationAudiences(): NotificationAudience[] | Promise<NotificationAudience[]>;
+    notificationAudience(id: number): NotificationAudience | Promise<NotificationAudience>;
+    getNotificationData(getNotificationsInput: GetNotificationsInput): Notification[] | Promise<Notification[]>;
+    getUnreadNotificationCount(userId: string): number | Promise<number>;
+    getNotificationMetadata(notificationId: string): NotificationMeta[] | Promise<NotificationMeta[]>;
     me(): User | Promise<User>;
     getUserByUsername(username: string): User | Promise<User>;
 }
@@ -116,6 +127,7 @@ export interface IMutation {
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
     friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
     handleFriendRequest(friendUserId: string, status: FriendRequestStatus): string | Promise<string>;
+    markNotificationRead(userId: string): string | Promise<string>;
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
@@ -163,6 +175,38 @@ export interface UserFollowingResponse {
 export interface UserFollowerResponse {
     total: number;
     followers: Friend[];
+}
+
+export interface NotificationAudience {
+    id: number;
+    userId: string;
+    entityId: string;
+    entityType: string;
+    action: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Notification {
+    id: number;
+    userId: string;
+    isRead: boolean;
+    notificationType: string;
+    entityId: string;
+    entityType: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface NotificationMeta {
+    id: number;
+    notificationId: number;
+    entityId: string;
+    entityType: string;
+    referenceId?: Nullable<string>;
+    referenceType?: Nullable<string>;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface User {

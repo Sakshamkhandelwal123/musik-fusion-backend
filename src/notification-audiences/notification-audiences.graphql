@@ -1,0 +1,16 @@
+scalar Date
+
+type NotificationAudience {
+  id: Int!
+  userId: String!
+  entityId: String!
+  entityType: String!
+  action: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type Query {
+  notificationAudiences: [NotificationAudience!]!
+  notificationAudience(id: Int!): NotificationAudience!
+}
