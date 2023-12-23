@@ -1,34 +1,76 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
+import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { NotificationsService } from './notifications.service';
-import { CreateNotificationInput } from './dto/create-notification.input';
-import { UpdateNotificationInput } from './dto/update-notification.input';
+import { NotificationMetasService } from './notification-metas.service';
+import { GetNotificationsDto } from './dto/get-notification.input';
 
 @Resolver('Notification')
 export class NotificationsResolver {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    private readonly notificationsService: NotificationsService,
+    private readonly notificationMetasService: NotificationMetasService,
+  ) {}
 
-  @Mutation('createNotification')
-  create(@Args('createNotificationInput') createNotificationInput: CreateNotificationInput) {
-    return this.notificationsService.create(createNotificationInput);
+  @Query('getNotificationData')
+  getNotificationData(
+    @Args('getNotificationsInput') getNotificationsInput: GetNotificationsDto,
+  ) {
+    try {
+      return this.notificationsService.findAll(
+        { userId: getNotificationsInput.userId },
+        {
+          limit: getNotificationsInput.limit,
+          offset: getNotificationsInput.offset,
+        },
+      );
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  @Query('notifications')
-  findAll() {
-    return this.notificationsService.findAll();
+  @Query('getUnreadNotificationCount')
+  getUnreadNotificationCount(@Args('userId') userId: string) {
+    try {
+      return this.notificationsService.findUnreadNotificationsCount({ userId });
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  @Query('notification')
-  findOne(@Args('id') id: number) {
-    return this.notificationsService.findOne(id);
+  @Query('getNotificationMetadata')
+  getNotificationMetadata(@Args('notificationId') notificationId: string) {
+    try {
+      return this.notificationMetasService.findAll(
+        { notificationId },
+        { order: [['createdAt', 'DESC']] },
+      );
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  @Mutation('updateNotification')
-  update(@Args('updateNotificationInput') updateNotificationInput: UpdateNotificationInput) {
-    return this.notificationsService.update(updateNotificationInput.id, updateNotificationInput);
-  }
+  @Mutation('markNotificationRead')
+  async markNotificationRead(@Args('userId') userId: string) {
+    try {
+      await this.notificationsService.update({ isRead: true }, { userId });
 
-  @Mutation('removeNotification')
-  remove(@Args('id') id: number) {
-    return this.notificationsService.remove(id);
+      return 'Successfully Marked All Notifications As Read!';
+    } catch (error) {
+      throw new HttpException(
+        getErrorCodeAndMessage(error),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
