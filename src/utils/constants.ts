@@ -66,6 +66,10 @@ export enum EntityType {
   CHANNEL = 'CHANNEL',
 }
 
+export enum ActionType {
+  CREATED = 'CREATED',
+}
+
 export enum EventName {
   USER_SIGN_IN = 'USER_SIGN_IN',
   USER_SIGN_UP = 'USER_SIGN_UP',
