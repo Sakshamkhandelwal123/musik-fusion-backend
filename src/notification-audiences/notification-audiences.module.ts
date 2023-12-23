@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { SequelizeModule } from '@nestjs/sequelize';
+
+import { NotificationAudience } from './entities/notification-audience.entity';
 import { NotificationAudiencesService } from './notification-audiences.service';
 import { NotificationAudiencesResolver } from './notification-audiences.resolver';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { NotificationAudience } from './entities/notification-audience.entity';
 
 @Module({
   imports: [SequelizeModule.forFeature([NotificationAudience])],
