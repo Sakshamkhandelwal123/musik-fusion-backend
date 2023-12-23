@@ -1,24 +1,16 @@
+scalar Date
+
 type NotificationAudience {
-  # Example field (placeholder)
-  exampleField: Int
-}
-
-input CreateNotificationAudienceInput {
-  # Example field (placeholder)
-  exampleField: Int
-}
-
-input UpdateNotificationAudienceInput {
   id: Int!
+  userId: String!
+  entityId: String!
+  entityType: String!
+  action: String!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 type Query {
-  notificationAudiences: [NotificationAudience]!
-  notificationAudience(id: Int!): NotificationAudience
-}
-
-type Mutation {
-  createNotificationAudience(createNotificationAudienceInput: CreateNotificationAudienceInput!): NotificationAudience!
-  updateNotificationAudience(updateNotificationAudienceInput: UpdateNotificationAudienceInput!): NotificationAudience!
-  removeNotificationAudience(id: Int!): NotificationAudience
+  notificationAudiences: [NotificationAudience!]!
+  notificationAudience(id: Int!): NotificationAudience!
 }

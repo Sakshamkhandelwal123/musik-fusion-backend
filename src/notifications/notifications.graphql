@@ -1,24 +1,39 @@
+scalar Date
+
 type Notification {
-  # Example field (placeholder)
-  exampleField: Int
-}
-
-input CreateNotificationInput {
-  # Example field (placeholder)
-  exampleField: Int
-}
-
-input UpdateNotificationInput {
   id: Int!
+  userId: String!
+  isRead: Boolean!
+  notificationType: String!
+  entityId: String!
+  entityType: String!
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+type NotificationMeta {
+  id: Int!
+  notificationId: Int!
+  entityId: String!
+  entityType: String!
+  referenceId: String
+  referenceType: String
+  createdAt: Date!
+  updatedAt: Date!
+}
+
+input GetNotificationsInput {
+  limit: Int!
+  offset: Int!
+  userId: Int!
 }
 
 type Query {
-  notifications: [Notification]!
-  notification(id: Int!): Notification
+  getNotificationData(getNotificationsInput: GetNotificationsInput!): [Notification!]!
+  getUnreadNotificationCount(userId: String!): Int!
+  getNotificationMetadata(notificationId: String!): [NotificationMeta!]!
 }
 
 type Mutation {
-  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
-  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
-  removeNotification(id: Int!): Notification
+  markNotificationRead(userId: String!): String!
 }

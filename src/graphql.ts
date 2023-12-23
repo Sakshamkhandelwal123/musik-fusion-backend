@@ -37,20 +37,10 @@ export interface UnFollowUserInput {
     followingUserId: string;
 }
 
-export interface CreateNotificationAudienceInput {
-    exampleField?: Nullable<number>;
-}
-
-export interface UpdateNotificationAudienceInput {
-    id: number;
-}
-
-export interface CreateNotificationInput {
-    exampleField?: Nullable<number>;
-}
-
-export interface UpdateNotificationInput {
-    id: number;
+export interface GetNotificationsInput {
+    limit: number;
+    offset: number;
+    userId: number;
 }
 
 export interface SignInInput {
@@ -116,10 +106,11 @@ export interface IQuery {
     getUserFriends(username: string): UserFriendResponse | Promise<UserFriendResponse>;
     getUserFollowers(username: string): UserFollowerResponse | Promise<UserFollowerResponse>;
     getUserFollowing(username: string): UserFollowingResponse | Promise<UserFollowingResponse>;
-    notificationAudiences(): Nullable<NotificationAudience>[] | Promise<Nullable<NotificationAudience>[]>;
-    notificationAudience(id: number): Nullable<NotificationAudience> | Promise<Nullable<NotificationAudience>>;
-    notifications(): Nullable<Notification>[] | Promise<Nullable<Notification>[]>;
-    notification(id: number): Nullable<Notification> | Promise<Nullable<Notification>>;
+    notificationAudiences(): NotificationAudience[] | Promise<NotificationAudience[]>;
+    notificationAudience(id: number): NotificationAudience | Promise<NotificationAudience>;
+    getNotificationData(getNotificationsInput: GetNotificationsInput): Notification[] | Promise<Notification[]>;
+    getUnreadNotificationCount(userId: string): number | Promise<number>;
+    getNotificationMetadata(notificationId: string): NotificationMeta[] | Promise<NotificationMeta[]>;
     me(): User | Promise<User>;
     getUserByUsername(username: string): User | Promise<User>;
 }
@@ -136,12 +127,7 @@ export interface IMutation {
     unFollowUser(unFollowUserInput: UnFollowUserInput): string | Promise<string>;
     friendUnfriendAUser(friendUnfriendInput: FriendUnfriendInput): string | Promise<string>;
     handleFriendRequest(friendUserId: string, status: FriendRequestStatus): string | Promise<string>;
-    createNotificationAudience(createNotificationAudienceInput: CreateNotificationAudienceInput): NotificationAudience | Promise<NotificationAudience>;
-    updateNotificationAudience(updateNotificationAudienceInput: UpdateNotificationAudienceInput): NotificationAudience | Promise<NotificationAudience>;
-    removeNotificationAudience(id: number): Nullable<NotificationAudience> | Promise<Nullable<NotificationAudience>>;
-    createNotification(createNotificationInput: CreateNotificationInput): Notification | Promise<Notification>;
-    updateNotification(updateNotificationInput: UpdateNotificationInput): Notification | Promise<Notification>;
-    removeNotification(id: number): Nullable<Notification> | Promise<Nullable<Notification>>;
+    markNotificationRead(userId: string): string | Promise<string>;
     resetPassword(): string | Promise<string>;
     forgotPassword(email: string): string | Promise<string>;
     signUp(signUpInput: SignUpInput): string | Promise<string>;
@@ -192,11 +178,35 @@ export interface UserFollowerResponse {
 }
 
 export interface NotificationAudience {
-    exampleField?: Nullable<number>;
+    id: number;
+    userId: string;
+    entityId: string;
+    entityType: string;
+    action: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface Notification {
-    exampleField?: Nullable<number>;
+    id: number;
+    userId: string;
+    isRead: boolean;
+    notificationType: string;
+    entityId: string;
+    entityType: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface NotificationMeta {
+    id: number;
+    notificationId: number;
+    entityId: string;
+    entityType: string;
+    referenceId?: Nullable<string>;
+    referenceType?: Nullable<string>;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface User {
