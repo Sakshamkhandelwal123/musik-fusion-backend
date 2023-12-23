@@ -59,6 +59,8 @@ export const isNotificationValid = (notificationType: EventName) =>
     EventName.FRIEND_REQUEST_ACCEPTED,
     EventName.FRIEND_REQUEST_REJECTED,
     EventName.USER_FOLLOWED,
+    EventName.CHANNEL_JOINED,
+    EventName.CHANNEL_LEFT,
   ].includes(notificationType);
 
 export const isNotificationAudienceValid = (notificationType: EventName) =>
