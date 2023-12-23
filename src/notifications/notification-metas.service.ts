@@ -11,7 +11,7 @@ export class NotificationMetasService {
   ) {}
 
   create(payload = {}) {
-    return this.notificationMetaModel.create({ ...payload });
+    return this.notificationMetaModel.create(payload);
   }
 
   findAll(payload = {}, options = {}) {

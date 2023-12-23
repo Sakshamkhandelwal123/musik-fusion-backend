@@ -45,7 +45,7 @@ export class NotificationsService {
                 userId: audience.userId,
                 notificationType: eventType,
                 entityId,
-                eventType,
+                entityType: eventType,
               });
 
               id = notification.id;
@@ -53,9 +53,9 @@ export class NotificationsService {
 
             const notificationMeta =
               await this.notificationMetasService.findAll({
-                id,
-                performerId,
-                entityType,
+                notificationId: id,
+                entityId: performerId,
+                referenceType: entityType,
               });
 
             if (!isPresent(notificationMeta)) {
@@ -73,7 +73,7 @@ export class NotificationsService {
     }
   }
 
-    findAll(payload = {}, options = {}) {
+  findAll(payload = {}, options = {}) {
     return this.notificationModel.findAll({
       where: payload,
       ...options,
