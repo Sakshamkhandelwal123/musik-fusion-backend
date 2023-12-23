@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { CreateNotificationAudienceInput } from './dto/create-notification-audience.input';
-import { UpdateNotificationAudienceInput } from './dto/update-notification-audience.input';
 import { InjectModel } from '@nestjs/sequelize';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { ActionType, EventName } from 'src/utils/constants';
+import { isNotificationAudienceValid } from 'src/utils/helpers';
 import { NotificationAudience } from './entities/notification-audience.entity';
+import { CreateNotificationAudienceInput } from './dto/create-notification-audience.input';
 
 @Injectable()
 export class NotificationAudiencesService {
@@ -12,9 +14,21 @@ export class NotificationAudiencesService {
   ) {}
 
   create(createNotificationAudienceInput: CreateNotificationAudienceInput) {
-    return this.notificationAudienceModel.create({
-      ...createNotificationAudienceInput,
-    });
+    try {
+      const { eventType, entityType, entityId, performerId } =
+        createNotificationAudienceInput;
+
+      if (isNotificationAudienceValid(eventType as EventName)) {
+        return this.notificationAudienceModel.create({
+          userId: performerId,
+          entityId,
+          entityType,
+          action: ActionType.CREATED,
+        });
+      }
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 
   findAll(payload = {}, options = {}) {
@@ -29,16 +43,5 @@ export class NotificationAudiencesService {
       where: payload,
       ...options,
     });
-  }
-
-  update(
-    id: number,
-    updateNotificationAudienceInput: UpdateNotificationAudienceInput,
-  ) {
-    return `This action updates a #${id} notificationAudience`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} notificationAudience`;
   }
 }
