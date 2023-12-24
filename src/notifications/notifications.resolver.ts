@@ -1,10 +1,10 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 
 import { getErrorCodeAndMessage } from 'src/utils/helpers';
 import { NotificationsService } from './notifications.service';
-import { NotificationMetasService } from './notification-metas.service';
 import { GetNotificationsDto } from './dto/get-notification.input';
+import { NotificationMetasService } from './notification-metas.service';
 
 @Resolver('Notification')
 export class NotificationsResolver {
