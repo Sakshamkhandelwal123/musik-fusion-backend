@@ -1,9 +1,11 @@
 import { InjectModel } from '@nestjs/sequelize';
 import { Injectable, Logger } from '@nestjs/common';
 
+import { paginationQuery } from 'src/utils/pagination';
 import { EntityType, EventName } from 'src/utils/constants';
 import { Notification } from './entities/notification.entity';
 import { isNotificationValid, isPresent } from 'src/utils/helpers';
+import { NotificationMeta } from './entities/notification-meta.entity';
 import { NotificationMetasService } from './notification-metas.service';
 import { CreateNotificationInput } from './dto/create-notification.input';
 import { NotificationAudiencesService } from 'src/notification-audiences/notification-audiences.service';
@@ -13,6 +15,9 @@ export class NotificationsService {
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+
+    @InjectModel(NotificationMeta)
+    private readonly notificationMetaModel: typeof NotificationMeta,
 
     private readonly notificationAudiencesService: NotificationAudiencesService,
 
@@ -73,11 +78,36 @@ export class NotificationsService {
     }
   }
 
-  findAll(payload = {}, options = {}) {
-    return this.notificationModel.findAll({
+  async findAll(payload = {}, options: { limit?: number; offset?: number }) {
+    const { limit, offset } = options;
+
+    const query = {
       where: payload,
-      ...options,
+      include: {
+        model: this.notificationMetaModel,
+        as: 'metaData',
+        order: [['updatedAt', 'DESC']],
+      },
+    };
+
+    const notificationsData = await paginationQuery(
+      this.notificationModel,
+      offset,
+      limit,
+      query,
+      [['updatedAt', 'DESC']],
+    );
+
+    const notificationCount = await this.notificationModel.count({
+      where: payload,
     });
+
+    return {
+      total: notificationCount,
+      limit: notificationsData.limit,
+      offset: notificationsData.offset,
+      data: notificationsData.data,
+    };
   }
 
   findOne(payload = {}, options = {}) {
